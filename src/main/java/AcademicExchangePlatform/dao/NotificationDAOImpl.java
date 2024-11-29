@@ -7,11 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NotificationDAOImpl implements NotificationDAO {
+    private DatabaseConnection dbConnection = DatabaseConnection.getInstance();
 
     @Override
     public void createNotification(Notification notification) {
         String query = "INSERT INTO Notifications (userId, message, dateSent, status) VALUES (?, ?, ?, ?)";
-        try (Connection connection = DatabaseConnection.getConnection();
+        try (Connection connection = dbConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
 
             statement.setInt(1, notification.getUserId());
@@ -29,7 +30,7 @@ public class NotificationDAOImpl implements NotificationDAO {
     public List<Notification> getNotificationsByUserId(int userId) {
         List<Notification> notifications = new ArrayList<>();
         String query = "SELECT * FROM Notifications WHERE userId = ?";
-        try (Connection connection = DatabaseConnection.getConnection();
+        try (Connection connection = dbConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
 
             statement.setInt(1, userId);
@@ -54,7 +55,7 @@ public class NotificationDAOImpl implements NotificationDAO {
     @Override
     public void updateNotificationStatus(int notificationId, String status) {
         String query = "UPDATE Notifications SET status = ? WHERE notificationId = ?";
-        try (Connection connection = DatabaseConnection.getConnection();
+        try (Connection connection = dbConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
 
             statement.setString(1, status);
@@ -69,7 +70,7 @@ public class NotificationDAOImpl implements NotificationDAO {
     @Override
     public void deleteNotification(int notificationId) {
         String query = "DELETE FROM Notifications WHERE notificationId = ?";
-        try (Connection connection = DatabaseConnection.getConnection();
+        try (Connection connection = dbConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
 
             statement.setInt(1, notificationId);

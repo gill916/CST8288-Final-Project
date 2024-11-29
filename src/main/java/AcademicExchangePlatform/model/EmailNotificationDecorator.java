@@ -6,12 +6,12 @@ public class EmailNotificationDecorator extends NotificationDecorator {
     }
 
     @Override
-    public void notifyObservers(String message) {
-        super.notifyObservers(message);
-        sendEmail(message);
+    public void sendNotification() {
+        super.sendNotification();
+        sendEmail();
     }
 
-    private void sendEmail(String message) {
-        System.out.println("Email sent: " + message);
+    private void sendEmail() {
+        System.out.println("Email sent: " + decoratedNotification.getMessage());
     }
 }

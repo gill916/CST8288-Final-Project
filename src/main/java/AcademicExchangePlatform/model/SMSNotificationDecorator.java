@@ -1,8 +1,8 @@
 package AcademicExchangePlatform.model;
 
 public class SMSNotificationDecorator extends NotificationDecorator {
-    public SMSNotificationDecorator(Notification decoratedNotification) {
-        super(decoratedNotification);
+    public SMSNotificationDecorator(Subject wrappedNotifier) {
+        super(wrappedNotifier);
     }
 
     @Override

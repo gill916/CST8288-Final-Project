@@ -7,8 +7,8 @@ public abstract class NotificationDecorator extends Notification {
         this.decoratedNotification = decoratedNotification;
     }
 
-    @Override
-    public void notifyObservers(String message) {
-        decoratedNotification.notifyObservers(message);
+    public void sendNotification() {
+        // Base behavior
+        System.out.println("Sending notification: " + decoratedNotification.getMessage());
     }
 }
