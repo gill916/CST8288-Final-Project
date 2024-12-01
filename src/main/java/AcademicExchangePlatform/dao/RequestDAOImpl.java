@@ -101,6 +101,18 @@ public class RequestDAOImpl implements RequestDAO{
     }
 
     @Override
+    public void cancelRequestById(int requestId){
+        String query = "DELETE FROM Requests WHERE requestId = ?";
+
+        try(PreparedStatement preparedStatement = connection.prepareStatement(query)){
+            preparedStatement.setInt(1, requestId);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public List<Request> getRequestByCourse(int courseId) {
         List<Request> list = new ArrayList<Request>();
 
@@ -125,6 +137,37 @@ public class RequestDAOImpl implements RequestDAO{
                         decisionDate
                     )
                 );
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    @Override
+    public List<Request> getRequestByUserId(int userId){
+        List<Request> list = new ArrayList<Request>();
+
+        String query = "SELECT * FROM Requests JOIN Courses ON Requests.courseId = Courses.courseId WHERE userId = ?";
+
+        try(PreparedStatement preparedStatement = connection.prepareStatement(query)){
+            preparedStatement.setInt(1, userId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while(resultSet.next()){
+                Timestamp requestDateTS = resultSet.getTimestamp("requestDate");
+                Timestamp decisionDateTS = resultSet.getTimestamp("decisionDate");
+                Date requestDate = (requestDateTS == null) ? null: new Date(requestDateTS.getTime());
+                Date decisionDate = (decisionDateTS == null) ? null : new Date(decisionDateTS.getTime());
+                Request request = new Request(
+                        resultSet.getInt("requestId"),
+                        resultSet.getInt("courseId"),
+                        resultSet.getInt("professionalId"),
+                        resultSet.getString("status"),
+                        requestDate,
+                        decisionDate
+                    );
+                request.setCourseTitle(resultSet.getString("courseTitle"));
+                list.add(request);
             }
         } catch (SQLException e){
             e.printStackTrace();

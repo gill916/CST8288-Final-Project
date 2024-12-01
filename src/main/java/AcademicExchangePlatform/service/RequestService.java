@@ -16,8 +16,18 @@ public class RequestService {
         return dao.getRequestByCourse(courseId);
     }
 
+    public List<Request> getRequestByUserId(int userId) throws ClassNotFoundException, SQLException{
+        RequestDAO dao = RequestDAOImpl.getInstance();
+        return dao.getRequestByUserId(userId);
+    }
+
     public boolean handleRequest(int requestId, String status) throws ClassNotFoundException, SQLException{
         RequestDAO dao = RequestDAOImpl.getInstance();
         return dao.updateRequestStatus(requestId, status);
+    }
+
+    public void cancelRequestById(int requestId) throws ClassNotFoundException, SQLException{
+        RequestDAO dao = RequestDAOImpl.getInstance();
+        dao.cancelRequestById(requestId);
     }
 }

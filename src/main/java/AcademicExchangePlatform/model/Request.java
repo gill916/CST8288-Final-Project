@@ -4,6 +4,7 @@ import java.util.Date;
 public class Request {
     private int requestId;
     private int courseId;
+    private String courseTitle;
     private int professionalId;
     private String status;
     private Date requestDate;
@@ -79,5 +80,13 @@ public class Request {
 
     public boolean updateStatus(int requestId, String status){
         return false;
+    }
+
+    public String getCourseTitle() {
+        return this.courseTitle;
+    }
+
+    public void setCourseTitle(String courseTitle) {
+        this.courseTitle = courseTitle;
     }
 }

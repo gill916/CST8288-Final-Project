@@ -7,7 +7,11 @@ public interface RequestDAO {
 
     public Request getRequestById(int requestId);
 
+    public void cancelRequestById(int requestId);
+
     public List<Request> getRequestByCourse(int courseId);
+
+    public List<Request> getRequestByUserId(int userId);
 
     public boolean updateRequestStatus(int requestId, String status);
 }
