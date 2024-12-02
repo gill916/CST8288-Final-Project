@@ -21,19 +21,19 @@
                 <c:if test="${not empty requestsByUserId}">
                     <tbody>
                         <c:forEach var="request" items="${requestsByUserId}">
-                                <tr>
-                                    <td>${request.courseTitle}</td>
-                                    <td>${request.status}</td>
-                                    <td>${request.requestDate}</td>
-                                    <td>${request.decisionDate}</td>
-                                    <td>
-                                        <form action="/Requests" method="post" style="display:inline">
-                                            <input type="hidden" name="action" value="cancel" />
-                                            <input type="hiddem" name="requestId" value="${request.requestId}">
-                                            <button type="submit">Cancel</button>
-                                        </form>
-                                    </td>
-                                </tr>
+                            <tr>
+                                <td>${request.courseTitle}</td>
+                                <td>${request.status}</td>
+                                <td>${request.requestDate}</td>
+                                <td>${request.decisionDate}</td>
+                                <td>
+                                    <form action="/Requests" method="post" style="display:inline">
+                                        <input type="hidden" name="action" value="cancel" />
+                                        <input type="hiddem" name="requestId" value="${request.requestId}" />
+                                        <button type="submit">Cancel</button>
+                                    </form>
+                                </td>
+                            </tr>
                         </c:forEach>
                     </tbody>
                 </c:if>
