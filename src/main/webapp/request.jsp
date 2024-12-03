@@ -45,5 +45,6 @@
                 <a href="/Requests?page=${param.page + 1}"></a>
             </div>
         </div>
+        <a href="/Search">Back to search</a>
     </body>
 </html>
