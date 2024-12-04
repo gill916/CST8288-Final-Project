@@ -7,6 +7,11 @@ import java.util.List;
 
 import AcademicExchangePlatform.model.Request;
 
+/**
+ * Implementation of the RequestDAO interface.
+ * @author Peter Stainforth
+ */
+
 public class RequestDAOImpl implements RequestDAO{
 
     private Connection connection;

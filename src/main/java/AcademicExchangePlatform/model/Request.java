@@ -1,6 +1,10 @@
 package AcademicExchangePlatform.model;
 import java.util.Date;
 
+/**
+ * Request model class outlines the makeup of a request.
+ */
+
 public class Request {
     private int requestId;
     private int courseId;
