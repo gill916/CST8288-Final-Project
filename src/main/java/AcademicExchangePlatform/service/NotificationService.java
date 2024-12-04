@@ -6,7 +6,7 @@ import AcademicExchangePlatform.model.Notification;
 import AcademicExchangePlatform.model.Subject;
 import AcademicExchangePlatform.model.Observer;
 import AcademicExchangePlatform.model.NotificationManager;
-
+import AcademicExchangePlatform.dbenum.NotificationStatus;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +36,7 @@ public class NotificationService implements Subject {
         notification.setUserId(userId);
         notification.setMessage(message);
         notification.setDateSent(LocalDateTime.now());
-        notification.setStatus("Unread");
+        notification.setStatus(NotificationStatus.Unread);
         notificationDAO.createNotification(notification);
         notifyObservers(message);
     }
@@ -46,7 +46,7 @@ public class NotificationService implements Subject {
     }
 
     public void markNotificationAsRead(int notificationId) {
-        notificationDAO.updateNotificationStatus(notificationId, "Read");
+        notificationDAO.updateNotificationStatus(notificationId, NotificationStatus.Read);
     }
 
     public void deleteNotification(int notificationId) {

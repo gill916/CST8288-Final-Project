@@ -1,17 +1,17 @@
 package AcademicExchangePlatform.model;
 
 public class EmailNotificationDecorator extends NotificationDecorator {
-    public EmailNotificationDecorator(Notification decoratedNotification) {
-        super(decoratedNotification);
+    public EmailNotificationDecorator(Subject wrappedSubject) {
+        super(wrappedSubject);
     }
 
     @Override
-    public void sendNotification() {
-        super.sendNotification();
-        sendEmail();
+    public void notifyObservers(String message) {
+        super.notifyObservers(message);
+        sendEmail(message);
     }
 
-    private void sendEmail() {
-        System.out.println("Email sent: " + decoratedNotification.getMessage());
+    private void sendEmail(String message) {
+        System.out.println("Email sent: " + message);
     }
 }

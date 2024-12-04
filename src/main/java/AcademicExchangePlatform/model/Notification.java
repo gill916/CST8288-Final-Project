@@ -1,8 +1,5 @@
 package AcademicExchangePlatform.model;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import AcademicExchangePlatform.dbenum.NotificationStatus;
 
 import java.time.LocalDateTime;
 
@@ -11,7 +8,7 @@ public class Notification {
     private int userId;
     private String message;
     private LocalDateTime dateSent;
-    private String status;
+    private NotificationStatus status;
 
     // Getters and Setters
     public int getNotificationId() {
@@ -46,11 +43,11 @@ public class Notification {
         this.dateSent = dateSent;
     }
 
-    public String getStatus() {
+    public NotificationStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(NotificationStatus status) {
         this.status = status;
     }
 }

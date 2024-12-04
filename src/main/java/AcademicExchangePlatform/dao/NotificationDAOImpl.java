@@ -1,6 +1,7 @@
 package AcademicExchangePlatform.dao;
 import AcademicExchangePlatform.model.Notification;
 import AcademicExchangePlatform.model.DatabaseConnection;
+import AcademicExchangePlatform.dbenum.NotificationStatus;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ public class NotificationDAOImpl implements NotificationDAO {
             statement.setInt(1, notification.getUserId());
             statement.setString(2, notification.getMessage());
             statement.setTimestamp(3, Timestamp.valueOf(notification.getDateSent()));
-            statement.setString(4, notification.getStatus());
+            statement.setString(4, notification.getStatus().toString());
             statement.executeUpdate();
 
         } catch (SQLException e) {
@@ -42,7 +43,7 @@ public class NotificationDAOImpl implements NotificationDAO {
                 notification.setUserId(resultSet.getInt("userId"));
                 notification.setMessage(resultSet.getString("message"));
                 notification.setDateSent(resultSet.getTimestamp("dateSent").toLocalDateTime());
-                notification.setStatus(resultSet.getString("status"));
+                notification.setStatus(NotificationStatus.valueOf(resultSet.getString("status")));
                 notifications.add(notification);
             }
 
@@ -53,12 +54,12 @@ public class NotificationDAOImpl implements NotificationDAO {
     }
 
     @Override
-    public void updateNotificationStatus(int notificationId, String status) {
+    public void updateNotificationStatus(int notificationId, NotificationStatus status) {
         String query = "UPDATE Notifications SET status = ? WHERE notificationId = ?";
         try (Connection connection = dbConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
 
-            statement.setString(1, status);
+            statement.setString(1, status.toString());
             statement.setInt(2, notificationId);
             statement.executeUpdate();
 
