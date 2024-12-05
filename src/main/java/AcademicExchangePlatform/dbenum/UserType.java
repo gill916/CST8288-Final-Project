@@ -2,9 +2,8 @@ package AcademicExchangePlatform.dbenum;
 
 
 public enum UserType {
-    ADMIN("Admin"),
-    INSTITUTION("Institution"),
-    PROFESSIONAL("Professional");
+    PROFESSIONAL("Professional"),
+    INSTITUTION("Institution");
 
     private final String value;
 
@@ -17,11 +16,11 @@ public enum UserType {
     }
 
     public static UserType fromValue(String value) {
-        for (UserType userType : UserType.values()) {
-            if (userType.getValue().equalsIgnoreCase(value)) {
-                return userType;
+        for (UserType type : UserType.values()) {
+            if (type.value.equalsIgnoreCase(value)) {
+                return type;
             }
         }
-        throw new IllegalArgumentException("Invalid UserType: " + value);
+        throw new IllegalArgumentException("Invalid user type: " + value);
     }
 }

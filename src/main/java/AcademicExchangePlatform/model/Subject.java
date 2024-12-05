@@ -1,7 +1,7 @@
 package AcademicExchangePlatform.model;
 
 public interface Subject {
-    void registerObserver(Observer observer);
-    void removeObserver(Observer observer);
-    void notifyObservers(String message);
+    void registerObserver(NotificationObserver observer);
+    void removeObserver(NotificationObserver observer);
+    void notifyObservers(String message, int userId, String type, String entityId);
 }

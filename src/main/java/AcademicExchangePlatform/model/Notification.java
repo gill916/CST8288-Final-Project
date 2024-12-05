@@ -1,14 +1,27 @@
 package AcademicExchangePlatform.model;
-import AcademicExchangePlatform.dbenum.NotificationStatus;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 public class Notification {
     private int notificationId;
     private int userId;
     private String message;
-    private LocalDateTime dateSent;
-    private NotificationStatus status;
+    private Date dateSent;
+    private boolean isRead;
+    private String type;
+    private String relatedEntityId; // Could be courseId, applicationId, etc.
+
+    // Constructors
+    public Notification() {}
+
+    public Notification(int userId, String message, String type, String relatedEntityId) {
+        this.userId = userId;
+        this.message = message;
+        this.type = type;
+        this.relatedEntityId = relatedEntityId;
+        this.dateSent = new Date();
+        this.isRead = false;
+    }
 
     // Getters and Setters
     public int getNotificationId() {
@@ -35,19 +48,35 @@ public class Notification {
         this.message = message;
     }
 
-    public LocalDateTime getDateSent() {
+    public Date getDateSent() {
         return dateSent;
     }
 
-    public void setDateSent(LocalDateTime dateSent) {
+    public void setDateSent(Date dateSent) {
         this.dateSent = dateSent;
     }
 
-    public NotificationStatus getStatus() {
-        return status;
+    public boolean isRead() {
+        return isRead;
     }
 
-    public void setStatus(NotificationStatus status) {
-        this.status = status;
+    public void setRead(boolean read) {
+        isRead = read;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getRelatedEntityId() {
+        return relatedEntityId;
+    }
+
+    public void setRelatedEntityId(String relatedEntityId) {
+        this.relatedEntityId = relatedEntityId;
     }
 }

@@ -1,9 +1,11 @@
 package AcademicExchangePlatform.model;
 
+import AcademicExchangePlatform.dbenum.CourseStatus;
 import AcademicExchangePlatform.dbenum.DeliveryMethod;
 import AcademicExchangePlatform.dbenum.Schedule;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 public class Course {
     private int courseId;
@@ -16,6 +18,8 @@ public class Course {
     private String preferredQualifications;
     private BigDecimal compensation;
     private int institutionId;
+    private CourseStatus status;
+    private Date applicationDeadline;
 
     // Getters and Setters
     public int getCourseId() {
@@ -96,5 +100,21 @@ public class Course {
 
     public void setInstitutionId(int institutionId) {
         this.institutionId = institutionId;
+    }
+
+    public CourseStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(CourseStatus status) {
+        this.status = status;
+    }
+
+    public Date getApplicationDeadline() {
+        return applicationDeadline;
+    }
+
+    public void setApplicationDeadline(Date applicationDeadline) {
+        this.applicationDeadline = applicationDeadline;
     }
 }

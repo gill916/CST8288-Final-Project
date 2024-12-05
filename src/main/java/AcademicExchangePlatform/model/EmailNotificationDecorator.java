@@ -6,8 +6,8 @@ public class EmailNotificationDecorator extends NotificationDecorator {
     }
 
     @Override
-    public void notifyObservers(String message) {
-        super.notifyObservers(message);
+    public void notifyObservers(String message, int userId, String type, String entityId) {
+        super.notifyObservers(message, userId, type, entityId);
         sendEmail(message);
     }
 

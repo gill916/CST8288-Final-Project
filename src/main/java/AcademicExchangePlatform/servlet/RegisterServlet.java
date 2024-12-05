@@ -1,9 +1,10 @@
 package AcademicExchangePlatform.servlet;
 
-import AcademicExchangePlatform.dao.UserDAOImpl;
 import AcademicExchangePlatform.dbenum.UserType;
+import AcademicExchangePlatform.model.AcademicProfessional;
+import AcademicExchangePlatform.model.AcademicInstitution;
 import AcademicExchangePlatform.model.User;
-import AcademicExchangePlatform.model.UserFactory;
+import AcademicExchangePlatform.service.UserService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,28 +15,79 @@ import java.io.IOException;
 
 @WebServlet("/RegisterServlet")
 public class RegisterServlet extends HttpServlet {
-    private final UserDAOImpl userDAO = new UserDAOImpl();
+    private final UserService userService = new UserService();
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
-        String userTypeValue = request.getParameter("userType");
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        // Load institution list for dropdown
+        request.setAttribute("institutions", userService.getAllInstitutions());
+        request.getRequestDispatcher("/WEB-INF/registration.jsp").forward(request, response);
+    }
 
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
         try {
+            // Get common parameters
+            String email = getRequiredParameter(request, "email");
+            String password = getRequiredParameter(request, "password");
+            String userTypeValue = getRequiredParameter(request, "userType");
+
             UserType userType = UserType.fromValue(userTypeValue);
-            User user = UserFactory.createUser(userType.getValue());
+            User user;
+
+            if (userType == UserType.PROFESSIONAL) {
+                user = createProfessionalUser(request);
+            } else if (userType == UserType.INSTITUTION) {
+                user = createInstitutionUser(request);
+            } else {
+                throw new IllegalArgumentException("Invalid user type");
+            }
+
             user.setEmail(email);
             user.setPassword(password);
             user.setUserType(userType);
 
-            if (userDAO.addUser(user)) {
+            if (userService.register(user)) {
                 response.sendRedirect("login.jsp");
             } else {
-                response.getWriter().write("Registration failed. Please try again.");
+                setError(request, "Registration failed");
+                doGet(request, response);
             }
         } catch (IllegalArgumentException e) {
-            response.getWriter().write("Invalid user type. Registration failed.");
+            setError(request, "Invalid input: " + e.getMessage());
+            doGet(request, response);
+        } catch (Exception e) {
+            setError(request, "System error: " + e.getMessage());
+            doGet(request, response);
         }
+    }
+
+    private String getRequiredParameter(HttpServletRequest request, String paramName) {
+        String value = request.getParameter(paramName);
+        if (value == null || value.trim().isEmpty()) {
+            throw new IllegalArgumentException("Missing required parameter: " + paramName);
+        }
+        return value.trim();
+    }
+
+    private void setError(HttpServletRequest request, String message) {
+        request.setAttribute("error", message);
+    }
+
+    private AcademicProfessional createProfessionalUser(HttpServletRequest request) {
+        AcademicProfessional professional = new AcademicProfessional();
+        professional.setFirstName(getRequiredParameter(request, "firstName"));
+        professional.setLastName(getRequiredParameter(request, "lastName"));
+        professional.setCurrentInstitution(getRequiredParameter(request, "currentInstitution"));
+        professional.setPosition(getRequiredParameter(request, "academicPosition"));
+        return professional;
+    }
+
+    private AcademicInstitution createInstitutionUser(HttpServletRequest request) {
+        AcademicInstitution institution = new AcademicInstitution();
+        institution.setInstitutionName(getRequiredParameter(request, "institutionName"));
+        return institution;
     }
 }

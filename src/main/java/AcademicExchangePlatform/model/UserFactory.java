@@ -1,18 +1,15 @@
 package AcademicExchangePlatform.model;
-
-import AcademicExchangePlatform.model.AcademicInstitution;
-import AcademicExchangePlatform.model.AcademicProfessional;
-import AcademicExchangePlatform.model.User;
+import AcademicExchangePlatform.dbenum.UserType;
 
 public class UserFactory {
-    public static User createUser(String userType) {
-        switch (userType) {
-            case "AcademicProfessional":
+    public static User createUser(UserType type) {
+        switch (type) {
+            case PROFESSIONAL:
                 return new AcademicProfessional();
-            case "AcademicInstitution":
+            case INSTITUTION:
                 return new AcademicInstitution();
             default:
-                throw new IllegalArgumentException("Invalid user type: " + userType);
+                throw new IllegalArgumentException("Invalid user type");
         }
     }
 }

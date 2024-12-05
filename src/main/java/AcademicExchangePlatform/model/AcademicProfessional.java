@@ -5,10 +5,12 @@ import java.util.List;
 public class AcademicProfessional extends User {
     private String firstName;
     private String lastName;
+    private String currentInstitution;
     private String position;
+    private String educationBackground;
     private List<String> expertise;
+    private boolean isProfileComplete;
 
-    // Getters and Setters
     public String getFirstName() {
         return firstName;
     }
@@ -25,12 +27,28 @@ public class AcademicProfessional extends User {
         this.lastName = lastName;
     }
 
+    public String getCurrentInstitution() {
+        return currentInstitution;
+    }
+
+    public void setCurrentInstitution(String currentInstitution) {
+        this.currentInstitution = currentInstitution;
+    }
+
     public String getPosition() {
         return position;
     }
 
     public void setPosition(String position) {
         this.position = position;
+    }
+
+    public String getEducationBackground() {
+        return educationBackground;
+    }
+
+    public void setEducationBackground(String educationBackground) {
+        this.educationBackground = educationBackground;
     }
 
     public List<String> getExpertise() {
@@ -41,9 +59,23 @@ public class AcademicProfessional extends User {
         this.expertise = expertise;
     }
 
-    // Method to complete profile
-    public void completeProfile(String position, List<String> expertise) {
+    public boolean isProfileComplete() {
+        return firstName != null && !firstName.isEmpty() &&
+               lastName != null && !lastName.isEmpty() &&
+               currentInstitution != null && !currentInstitution.isEmpty() &&
+               position != null && !position.isEmpty() &&
+               educationBackground != null && !educationBackground.isEmpty() &&
+               expertise != null && !expertise.isEmpty();
+    }
+
+    public void setProfileComplete(boolean profileComplete) {
+        this.isProfileComplete = profileComplete;
+    }
+
+    public void completeProfile(String position, String currentInstitution, String educationBackground, List<String> expertise) {
         this.position = position;
+        this.currentInstitution = currentInstitution;
+        this.educationBackground = educationBackground;
         this.expertise = expertise;
     }
 }

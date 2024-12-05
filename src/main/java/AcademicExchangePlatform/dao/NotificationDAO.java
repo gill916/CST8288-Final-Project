@@ -2,10 +2,13 @@ package AcademicExchangePlatform.dao;
 
 import java.util.List;
 import AcademicExchangePlatform.model.Notification;
-import AcademicExchangePlatform.dbenum.NotificationStatus;
+
 public interface NotificationDAO {
-    void createNotification(Notification notification);
+    boolean createNotification(Notification notification);
     List<Notification> getNotificationsByUserId(int userId);
-    void updateNotificationStatus(int notificationId, NotificationStatus status);
-    void deleteNotification(int notificationId);
+    List<Notification> getUnreadNotificationsByUserId(int userId);
+    boolean markAsRead(int notificationId);
+    boolean markAllAsRead(int userId);
+    boolean deleteNotification(int notificationId);
+    int getUnreadCount(int userId);
 }

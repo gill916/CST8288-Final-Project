@@ -1,11 +1,13 @@
 package AcademicExchangePlatform.dao;
 
 import AcademicExchangePlatform.model.User;
+import AcademicExchangePlatform.model.AcademicInstitution;
+import java.util.List;
 
 public interface UserDAO {
     boolean addUser(User user);
     User getUserByEmail(String email);
-    User getUserById(int userId);
     boolean updateUser(User user);
-    boolean deleteUser(int userId);
+    List<AcademicInstitution> getAllInstitutions();
+    User getUserById(int userId);
 }

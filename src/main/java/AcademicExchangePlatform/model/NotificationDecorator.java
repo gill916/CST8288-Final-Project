@@ -1,5 +1,7 @@
 package AcademicExchangePlatform.model;
 
+import AcademicExchangePlatform.model.NotificationObserver;
+
 public abstract class NotificationDecorator implements Subject {
     protected Subject wrappedSubject;
 
@@ -8,17 +10,17 @@ public abstract class NotificationDecorator implements Subject {
     }
 
     @Override
-    public void registerObserver(Observer observer) {
+    public void registerObserver(NotificationObserver observer) {
         wrappedSubject.registerObserver(observer);
     }
 
     @Override
-    public void removeObserver(Observer observer) {
+    public void removeObserver(NotificationObserver observer) {
         wrappedSubject.removeObserver(observer);
     }
 
     @Override
-    public void notifyObservers(String message) {
-        wrappedSubject.notifyObservers(message);
+    public void notifyObservers(String message, int userId, String type, String entityId) {
+        wrappedSubject.notifyObservers(message, userId, type, entityId);
     }
 }
