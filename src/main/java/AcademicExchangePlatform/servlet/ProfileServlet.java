@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-@WebServlet("/profile")
+
 public class ProfileServlet extends HttpServlet {
     private final UserService userService = UserService.getInstance();
 

@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="title" value="Decisions Management" scope="request"/>
 <%@ include file="../../common/header.jsp" %>
 
@@ -75,18 +76,18 @@
 <script>
 function updateDecision(decisionId, status) {
     if (confirm('Are you sure you want to ' + status.toLowerCase() + ' this decision?')) {
-        fetch('${pageContext.request.contextPath}/decision/update', {
+        fetch('${pageContext.request.contextPath}/requests/update', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: `decisionId=${decisionId}&status=${status}`
+            body: `requestId=${decisionId}&status=${status}`
         }).then(() => window.location.reload());
     }
 }
 
 function viewDetails(decisionId) {
-    fetch(`${pageContext.request.contextPath}/decision/details/${decisionId}`)
+    fetch(`${pageContext.request.contextPath}/requests/details/${decisionId}`)
         .then(response => response.json())
         .then(data => {
             document.getElementById('decisionDetails').innerHTML = `

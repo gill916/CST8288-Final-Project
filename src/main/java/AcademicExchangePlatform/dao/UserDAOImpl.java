@@ -99,17 +99,19 @@ public class UserDAOImpl implements UserDAO {
     }
 
     private void addInstitutionDetails(Connection connection, AcademicInstitution institution) throws SQLException {
-        String query = "INSERT INTO AcademicInstitutions (userId, institutionName, address) VALUES (?, ?, ?)";
+        String query = "INSERT INTO AcademicInstitutions (userId, institutionName, address, contactEmail) VALUES (?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, institution.getUserId());
             stmt.setString(2, institution.getInstitutionName());
             stmt.setString(3, institution.getAddress());
+            stmt.setString(4, institution.getContactEmail());
             stmt.executeUpdate();
         }
     }
 
     @Override
     public User getUserByEmail(String email) {
+        System.out.println("Fetching user with email: " + email);
         String query = "SELECT u.*, u.status, u.createdAt, u.lastLogin, ap.firstName, ap.lastName, ap.currentInstitution, ap.position, " +
                       "ai.institutionName, ai.address " +
                       "FROM Users u " +
@@ -122,8 +124,12 @@ public class UserDAOImpl implements UserDAO {
             
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
+            System.out.println("Query executed");
 
             if (rs.next()) {
+                System.out.println("User found in database");
+                System.out.println("UserType: " + rs.getString("userType"));
+                System.out.println("Status: " + rs.getString("status"));
                 UserType userType = UserType.fromValue(rs.getString("userType"));
                 User user;
 
@@ -145,6 +151,7 @@ public class UserDAOImpl implements UserDAO {
                 user.setEmail(rs.getString("email"));
                 user.setPassword(rs.getString("password"));
                 user.setUserType(userType);
+                user.setStatus(rs.getString("status"));
                 return user;
             }
         } catch (SQLException e) {

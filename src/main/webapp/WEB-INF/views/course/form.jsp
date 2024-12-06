@@ -1,11 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="title" value="Create Course" scope="request"/>
-<%@ include file="../common/header.jsp" %>
+<%@ include file="../../common/header.jsp" %>
 
 <div class="form-container">
     <h2>Create New Course</h2>
     
-    <form action="${pageContext.request.contextPath}/course" method="post" class="form-group">
+    <form action="${pageContext.request.contextPath}/course/create" method="post" class="form-group">
         <div class="form-group">
             <label for="courseTitle">Course Title:</label>
             <input type="text" id="courseTitle" name="courseTitle" required>
@@ -63,4 +64,4 @@
     </form>
 </div>
 
-<%@ include file="../common/footer.jsp" %> 
+<%@ include file="../../common/footer.jsp" %> 

@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="title" value="Manage Courses" scope="request"/>
 <%@ include file="../../common/header.jsp" %>
 
@@ -34,7 +35,11 @@
     </div>
 
     <div class="courses-grid">
+        <% 
+        System.out.println("DEBUG: manage.jsp - courses attribute: " + request.getAttribute("courses")); 
+        %>
         <c:forEach items="${courses}" var="course">
+            <% System.out.println("DEBUG: Processing course: " + pageContext.getAttribute("course")); %>
             <div class="course-card">
                 <div class="course-header">
                     <h3>${course.courseTitle}</h3>
@@ -64,5 +69,18 @@
                             <a href="${pageContext.request.contextPath}/course/edit/${course.courseId}">Edit Course</a>
                             <c:choose>
                                 <c:when test="${course.status == 'ACTIVE'}">
-                                    <a href="#
-</file> 
+                                    <a href="${pageContext.request.contextPath}/course/close/${course.courseId}">Close Course</a>
+                                </c:when>
+                                <c:otherwise>
+                                    <a href="${pageContext.request.contextPath}/course/activate/${course.courseId}">Activate Course</a>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </c:forEach>
+    </div>
+</div>
+
+<%@ include file="../../common/footer.jsp" %>

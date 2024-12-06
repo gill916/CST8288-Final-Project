@@ -1,6 +1,7 @@
 package AcademicExchangePlatform.dao;
 import AcademicExchangePlatform.dbenum.CourseStatus;
 import AcademicExchangePlatform.model.Course;
+import AcademicExchangePlatform.model.CourseSearchCriteria;
 import java.util.List;
 import java.util.Set;
 

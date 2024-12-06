@@ -1,11 +1,12 @@
 package AcademicExchangePlatform.servlet;
 
 import AcademicExchangePlatform.model.Course;
-import AcademicExchangePlatform.model.AcademicInstitution;
+import AcademicExchangePlatform.model.User;
 import AcademicExchangePlatform.service.CourseService;
 import AcademicExchangePlatform.dbenum.CourseStatus;
 import AcademicExchangePlatform.dbenum.DeliveryMethod;
 import AcademicExchangePlatform.dbenum.Schedule;
+import AcademicExchangePlatform.dbenum.UserType;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -16,9 +17,9 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.*;
+import java.util.stream.Collectors;
 
-@WebServlet("/course/*")
 public class CourseServlet extends HttpServlet {
     private final CourseService courseService = CourseService.getInstance();
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -26,62 +27,99 @@ public class CourseServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        AcademicInstitution institution = (AcademicInstitution) request.getSession().getAttribute("user");
-        if (institution == null) {
-            response.sendRedirect("/login");
+        String pathInfo = request.getPathInfo();
+        User user = (User) request.getSession().getAttribute("user");
+        
+        if (user == null || !user.getUserType().equals(UserType.INSTITUTION)) {
+            response.sendRedirect(request.getContextPath() + "/auth/login");
             return;
         }
 
-        String pathInfo = request.getPathInfo();
-        if (pathInfo == null || pathInfo.equals("/")) {
-            request.setAttribute("courses", courseService.getCoursesByInstitution(institution.getUserId()));
-            request.getRequestDispatcher("/WEB-INF/course/list.jsp").forward(request, response);
-        } else if (pathInfo.equals("/create")) {
-            request.getRequestDispatcher("/WEB-INF/course/form.jsp").forward(request, response);
-        } else if (pathInfo.startsWith("/edit/")) {
-            int courseId = Integer.parseInt(pathInfo.substring(6));
+        System.out.println("DEBUG: CourseServlet pathInfo: " + pathInfo);
+
+        if (pathInfo == null || pathInfo.equals("/") || pathInfo.equals("/manage")) {
+            handleManageCourses(request, response);
+        } else if ("/create".equals(pathInfo)) {
+            request.getRequestDispatcher("/WEB-INF/views/course/form.jsp").forward(request, response);
+        } else if (pathInfo.startsWith("/view/")) {
+            handleViewCourse(request, response);
+        } else {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        }
+    }
+
+    private void handleManageCourses(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        User user = (User) request.getSession().getAttribute("user");
+        String statusFilter = request.getParameter("status");
+        String termFilter = request.getParameter("term");
+        
+        System.out.println("DEBUG: Handling manage courses");
+        System.out.println("DEBUG: User ID: " + user.getUserId());
+        System.out.println("DEBUG: Status Filter: " + statusFilter);
+        System.out.println("DEBUG: Term Filter: " + termFilter);
+        
+        // Get courses for the institution
+        List<Course> courses = courseService.getCoursesByInstitution(user.getUserId());
+        System.out.println("DEBUG: Retrieved courses: " + courses);
+        
+        // Filter courses if status parameter is present
+        if (statusFilter != null && !statusFilter.isEmpty()) {
+            CourseStatus status = CourseStatus.valueOf(statusFilter);
+            courses = courses.stream()
+                           .filter(c -> c.getStatus() == status)
+                           .collect(Collectors.toList());
+        }
+        
+        // Filter courses if term parameter is present
+        if (termFilter != null && !termFilter.isEmpty()) {
+            courses = courses.stream()
+                           .filter(c -> termFilter.equals(c.getTerm()))
+                           .collect(Collectors.toList());
+        }
+        
+        // Set attributes needed by manage.jsp
+        request.setAttribute("courses", courses);
+        request.setAttribute("terms", courseService.getAvailableTerms());
+        
+        // Forward to manage.jsp
+        request.getRequestDispatcher("/WEB-INF/views/course/manage.jsp").forward(request, response);
+    }
+
+    private void handleViewCourse(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        try {
+            int courseId = Integer.parseInt(request.getPathInfo().substring(6));
             Course course = courseService.getCourseById(courseId);
-            if (course != null && course.getInstitutionId() == institution.getUserId()) {
+            if (course != null) {
                 request.setAttribute("course", course);
-                request.getRequestDispatcher("/WEB-INF/course/form.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/course/viewCourse.jsp").forward(request, response);
             } else {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
             }
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        AcademicInstitution institution = (AcademicInstitution) request.getSession().getAttribute("user");
-        if (institution == null) {
-            response.sendRedirect("/login");
+        User user = (User) request.getSession().getAttribute("user");
+        if (user == null || !user.getUserType().equals(UserType.INSTITUTION)) {
+            response.sendRedirect(request.getContextPath() + "/auth/login");
             return;
         }
 
         try {
             Course course = createCourseFromRequest(request);
-            course.setInstitutionId(institution.getUserId());
-
-            String courseId = request.getParameter("courseId");
-            boolean success;
-            if (courseId != null && !courseId.isEmpty()) {
-                course.setCourseId(Integer.parseInt(courseId));
-                success = courseService.updateCourse(course);
-            } else {
-                success = courseService.createCourse(course);
-            }
-
-            if (success) {
-                request.setAttribute("success", "Course saved successfully");
-            } else {
-                request.setAttribute("error", "Failed to save course");
-            }
+            course.setInstitutionId(user.getUserId());
+            courseService.createCourse(course);
+            response.sendRedirect(request.getContextPath() + "/course/manage");
         } catch (Exception e) {
             request.setAttribute("error", "Error: " + e.getMessage());
+            request.getRequestDispatcher("/WEB-INF/views/course/manage.jsp").forward(request, response);
         }
-
-        response.sendRedirect("/course");
     }
 
     private Course createCourseFromRequest(HttpServletRequest request) throws ParseException {

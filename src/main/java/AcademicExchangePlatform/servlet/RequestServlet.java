@@ -10,8 +10,10 @@ import javax.servlet.http.*;
 import AcademicExchangePlatform.model.Request;
 import AcademicExchangePlatform.service.RequestService;
 
-@WebServlet("/Requests")
+
 public class RequestServlet extends HttpServlet {
+
+    private final RequestService requestService = RequestService.getInstance();
 
     private int getIntFromAttribute(HttpServletResponse response, Object attribute, String attributeName) throws IOException {
         if (attribute == null) {
@@ -36,8 +38,6 @@ public class RequestServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        RequestService requestService = new RequestService();
-
         try {
             String userType = getStringAttribute(request, "userType");
             int userId = getIntFromAttribute(response, request.getAttribute("userId"), "userId");
@@ -51,10 +51,10 @@ public class RequestServlet extends HttpServlet {
                 return;
             }
 
-            if ("request.jsp".equals(targetPage)) {
-                handleRequestPage(request, response, requestService, userId);
-            } else if ("decision.jsp".equals(targetPage)) {
-                handleDecisionPage(request, response, requestService, courseId);
+            if (targetPage.contains("myRequests.jsp")) {
+                handleRequestPage(request, response, userId);
+            } else if (targetPage.contains("manage.jsp")) {
+                handleDecisionPage(request, response, courseId);
             }
         } catch (IllegalArgumentException e) {
             sendError(response, HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
@@ -71,33 +71,33 @@ public class RequestServlet extends HttpServlet {
 
     private String determineTargetPage(String userType) {
         if ("AcademicProfessional".equals(userType)) {
-            return "request.jsp";
+            return "/WEB-INF/views/request/myRequests.jsp";
         } else if ("AcademicInstitution".equals(userType)) {
-            return "decision.jsp";
+            return "/WEB-INF/views/decision/manage.jsp";
         }
         return null;
     }
 
-    private void handleRequestPage(HttpServletRequest request, HttpServletResponse response, RequestService requestService, int userId)
+    private void handleRequestPage(HttpServletRequest request, HttpServletResponse response, int userId)
             throws ServletException, IOException {
         try {
-            List<Request> requestsByUserId = requestService.getRequestByUserId(userId);
+            List<Request> requestsByUserId = this.requestService.getRequestByUserId(userId);
             List<Request> paginatedRequests = paginateRequests(request, requestsByUserId);
             request.setAttribute("requestsByUserId", paginatedRequests);
-            request.getRequestDispatcher("request.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/request/myRequests.jsp").forward(request, response);
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
             sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to retrieve requests.");
         }
     }
 
-    private void handleDecisionPage(HttpServletRequest request, HttpServletResponse response, RequestService requestService, int courseId)
+    private void handleDecisionPage(HttpServletRequest request, HttpServletResponse response, int courseId)
             throws ServletException, IOException {
         try {
-            List<Request> requestsByCourseId = requestService.getRequestByCourse(courseId);
+            List<Request> requestsByCourseId = this.requestService.getRequestByCourse(courseId);
             List<Request> paginatedRequests = paginateRequests(request, requestsByCourseId);
-            request.setAttribute("requestsByCourseId", paginatedRequests);
-            request.getRequestDispatcher("decision.jsp").forward(request, response);
+            request.setAttribute("decisions", paginatedRequests);
+            request.getRequestDispatcher("/WEB-INF/views/decision/manage.jsp").forward(request, response);
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
             sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to retrieve requests.");
@@ -124,15 +124,14 @@ public class RequestServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String action = request.getParameter("action");
-        RequestService requestService = new RequestService();
 
         try {
             if ("cancel".equals(action)) {
-                handleCancelAction(request, response, requestService);
+                handleCancelAction(request, response);
             } else if ("accept".equals(action)) {
-                handleRequestStatusChange(request, response, requestService, "Accepted");
+                handleRequestStatusChange(request, response, "Accepted");
             } else if ("reject".equals(action)) {
-                handleRequestStatusChange(request, response, requestService, "Rejected");
+                handleRequestStatusChange(request, response, "Rejected");
             } else {
                 doGet(request, response);
             }
@@ -142,17 +141,17 @@ public class RequestServlet extends HttpServlet {
         }
     }
 
-    private void handleCancelAction(HttpServletRequest request, HttpServletResponse response, RequestService requestService)
+    private void handleCancelAction(HttpServletRequest request, HttpServletResponse response)
             throws IOException, SQLException, ClassNotFoundException {
         int requestId = Integer.parseInt(request.getParameter("requestId"));
-        requestService.cancelRequestById(requestId);
+        this.requestService.cancelRequestById(requestId);
         response.sendRedirect("/Requests");
     }
 
-    private void handleRequestStatusChange(HttpServletRequest request, HttpServletResponse response, RequestService requestService, String status)
+    private void handleRequestStatusChange(HttpServletRequest request, HttpServletResponse response, String status)
             throws IOException, SQLException, ClassNotFoundException {
         int requestId = Integer.parseInt(request.getParameter("requestId"));
-        requestService.handleRequest(requestId, status);
+        this.requestService.handleRequest(requestId, status);
         response.sendRedirect("/Requests");
     }
 }

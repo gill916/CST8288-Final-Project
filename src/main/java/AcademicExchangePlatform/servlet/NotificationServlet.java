@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/notifications/*")
+
 public class NotificationServlet extends HttpServlet {
     private final NotificationService notificationService = NotificationService.getInstance();
 

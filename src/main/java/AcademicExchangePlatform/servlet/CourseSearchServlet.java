@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-@WebServlet("/course/search")
+
 public class CourseSearchServlet extends HttpServlet {
     private final CourseService courseService = CourseService.getInstance();
 

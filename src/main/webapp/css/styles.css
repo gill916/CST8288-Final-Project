@@ -1,45 +1,62 @@
-/* Common styles */
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* Navigation */
 .navbar {
-    background-color: #333;
+    background: #333;
     padding: 1rem;
-    color: white;
+    margin-bottom: 2rem;
 }
 
 .navbar a {
     color: white;
     text-decoration: none;
-    margin-right: 1rem;
+    padding: 0.5rem 1rem;
+    margin: 0 0.5rem;
 }
 
-.container {
-    padding: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
+.navbar a:hover {
+    background: #444;
 }
 
-.error {
-    color: red;
-    padding: 1rem;
-    background-color: #ffe6e6;
+/* Buttons */
+.btn {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
     border-radius: 4px;
-    margin: 1rem 0;
+    cursor: pointer;
+    margin: 0.5rem;
 }
 
-.success {
-    color: green;
-    padding: 1rem;
-    background-color: #e6ffe6;
-    border-radius: 4px;
-    margin: 1rem 0;
+.btn-primary {
+    background: #007bff;
+    color: white;
+    border: none;
 }
 
-/* Form styles */
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+    border: none;
+}
+
+/* Forms */
 .form-container {
     max-width: 600px;
     margin: 0 auto;
-    padding: 2rem;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    padding: 20px;
 }
 
 .form-group {
@@ -51,22 +68,13 @@
     margin-bottom: 0.5rem;
 }
 
-.form-group input, 
-.form-group select, 
+.form-group input,
+.form-group select,
 .form-group textarea {
     width: 100%;
-    padding: 0.5rem;
+    padding: 8px;
     border: 1px solid #ddd;
     border-radius: 4px;
-}
-
-.submit-btn {
-    background-color: #4CAF50;
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
 }
 
 /* Table styles */
@@ -88,4 +96,28 @@ th, td {
 
 th {
     background-color: #f5f5f5;
+}
+
+.dashboard-card {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: bold;
+    display: block;
 } 

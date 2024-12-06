@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/application/manage")
+
 public class ManageApplicationsServlet extends HttpServlet {
     private final CourseApplicationService applicationService = CourseApplicationService.getInstance();
     private final CourseService courseService = CourseService.getInstance();

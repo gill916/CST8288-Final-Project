@@ -43,7 +43,7 @@
                                class="btn btn-secondary">View Course</a>
                             
                             <c:if test="${request.status == 'PENDING'}">
-                                <form action="${pageContext.request.contextPath}/request/cancel" method="POST" 
+                                <form action="${pageContext.request.contextPath}/requests/cancel" method="POST" 
                                       style="display: inline;">
                                     <input type="hidden" name="requestId" value="${request.requestId}">
                                     <button type="submit" class="btn btn-danger" 

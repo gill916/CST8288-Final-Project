@@ -13,16 +13,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet("/RegisterServlet")
 public class RegisterServlet extends HttpServlet {
-    private final UserService userService = new UserService();
+    private final UserService userService = UserService.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         // Load institution list for dropdown
         request.setAttribute("institutions", userService.getAllInstitutions());
-        request.getRequestDispatcher("/WEB-INF/registration.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/auth/registration.jsp").forward(request, response);
     }
 
     @Override
@@ -50,7 +49,7 @@ public class RegisterServlet extends HttpServlet {
             user.setUserType(userType);
 
             if (userService.register(user)) {
-                response.sendRedirect("login.jsp");
+                response.sendRedirect(request.getContextPath() + "/auth/login");
             } else {
                 setError(request, "Registration failed");
                 doGet(request, response);
@@ -88,6 +87,8 @@ public class RegisterServlet extends HttpServlet {
     private AcademicInstitution createInstitutionUser(HttpServletRequest request) {
         AcademicInstitution institution = new AcademicInstitution();
         institution.setInstitutionName(getRequiredParameter(request, "institutionName"));
+        institution.setAddress(getRequiredParameter(request, "address"));
+        institution.setContactEmail(getRequiredParameter(request, "contactEmail"));
         return institution;
     }
 }
