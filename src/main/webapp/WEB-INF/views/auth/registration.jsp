@@ -1,84 +1,76 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="title" value="Register" scope="request"/>
 <%@ include file="../../common/header.jsp" %>
 
 <div class="container">
-    <h2>User Registration</h2>
-    <form action="${pageContext.request.contextPath}/auth/register" method="post" class="form-group">
-        <div class="form-group">
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
-        </div>
+    <div class="auth-form">
+        <h2>Register</h2>
+        
+        <c:if test="${not empty error}">
+            <div class="alert alert-danger">${error}</div>
+        </c:if>
 
-        <div class="form-group">
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-        </div>
-
-        <div class="form-group">
-            <label for="userType">User Type:</label>
-            <select id="userType" name="userType" required onchange="toggleFields()">
-                <option value="">Select User Type</option>
-                <option value="Professional">Academic Professional</option>
-                <option value="Institution">Academic Institution</option>
-            </select>
-        </div>
-
-        <div id="professionalFields" style="display: none;" class="conditional-fields">
+        <form action="${pageContext.request.contextPath}/auth/register" method="post" id="registrationForm" onsubmit="return validateForm()">
             <div class="form-group">
-                <label for="firstName">First Name:</label>
-                <input type="text" id="firstName" name="firstName">
-            </div>
-
-            <div class="form-group">
-                <label for="lastName">Last Name:</label>
-                <input type="text" id="lastName" name="lastName">
-            </div>
-
-            <div class="form-group">
-                <label for="currentInstitution">Current Institution:</label>
-                <select id="currentInstitution" name="currentInstitution">
-                    <c:forEach items="${institutions}" var="inst">
-                        <option value="${inst.institutionName}">${inst.institutionName}</option>
-                    </c:forEach>
+                <label>User Type</label>
+                <select name="userType" class="form-control" onchange="toggleUserTypeFields()" required>
+                    <option value="">Select Type</option>
+                    <option value="Professional">Academic Professional</option>
+                    <option value="Institution">Academic Institution</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="academicPosition">Academic Position:</label>
-                <input type="text" id="academicPosition" name="academicPosition">
-            </div>
-        </div>
-
-        <div id="institutionFields" style="display: none;" class="conditional-fields">
-            <div class="form-group">
-                <label for="institutionName">Institution Name:</label>
-                <input type="text" id="institutionName" name="institutionName">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" class="form-control" required>
             </div>
 
             <div class="form-group">
-                <label for="address">Address:</label>
-                <input type="text" id="address" name="address" required>
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" class="form-control" required>
             </div>
 
-            <div class="form-group">
-                <label for="contactEmail">Contact Email:</label>
-                <input type="email" id="contactEmail" name="contactEmail" required>
+            <!-- Professional Fields -->
+            <div id="professionalFields" style="display: none;">
+                <div class="form-group">
+                    <label>First Name</label>
+                    <input type="text" name="firstName" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Last Name</label>
+                    <input type="text" name="lastName" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Current Institution</label>
+                    <input type="text" name="currentInstitution" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Academic Position</label>
+                    <input type="text" name="academicPosition" class="form-control">
+                </div>
             </div>
-        </div>
 
-        <button type="submit" class="submit-btn">Register</button>
-    </form>
+            <!-- Institution Fields -->
+            <div id="institutionFields" style="display: none;">
+                <div class="form-group">
+                    <label>Institution Name</label>
+                    <input type="text" name="institutionName" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Address</label>
+                    <input type="text" name="address" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Contact Email</label>
+                    <input type="email" name="contactEmail" class="form-control">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Register</button>
+            <a href="${pageContext.request.contextPath}/auth/login" class="btn btn-link">Back to Login</a>
+        </form>
+    </div>
 </div>
 
-<script>
-function toggleFields() {
-    const userType = document.getElementById('userType').value;
-    document.getElementById('professionalFields').style.display = 
-        userType === 'Professional' ? 'block' : 'none';
-    document.getElementById('institutionFields').style.display = 
-        userType === 'Institution' ? 'block' : 'none';
-}
-</script>
-
-<%@ include file="../../common/footer.jsp" %>
+<%@ include file="../../common/footer.jsp" %> 

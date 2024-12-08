@@ -31,15 +31,42 @@ public class CourseApplicationDAOImpl implements CourseApplicationDAO {
 
     @Override
     public boolean updateApplicationStatus(int applicationId, ApplicationStatus status) {
-        String query = "UPDATE course_applications SET status = ? WHERE applicationId = ?";
-        try (Connection conn = DatabaseConnection.getInstance().getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, status.toString());
-            stmt.setInt(2, applicationId);
-            return stmt.executeUpdate() > 0;
+        Connection conn = null;
+        try {
+            conn = DatabaseConnection.getInstance().getConnection();
+            conn.setAutoCommit(false);
+            
+            // Update status
+            String query = "UPDATE course_applications SET status = ? WHERE applicationId = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                stmt.setString(1, status.toString());
+                stmt.setInt(2, applicationId);
+                boolean updated = stmt.executeUpdate() > 0;
+                
+                if (updated) {
+                    conn.commit();
+                    return true;
+                }
+                conn.rollback();
+                return false;
+            }
         } catch (SQLException e) {
+            try {
+                if (conn != null) conn.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
             e.printStackTrace();
             return false;
+        } finally {
+            try {
+                if (conn != null) {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -99,6 +126,66 @@ public class CourseApplicationDAOImpl implements CourseApplicationDAO {
     @Override
     public boolean withdrawApplication(int applicationId) {
         return updateApplicationStatus(applicationId, ApplicationStatus.WITHDRAWN);
+    }
+
+    @Override
+    public List<CourseApplication> getAllInstitutionApplications(int institutionId) {
+        List<CourseApplication> applications = new ArrayList<>();
+        String query = "SELECT ca.* FROM course_applications ca " +
+                      "JOIN courses c ON ca.courseId = c.courseId " +
+                      "WHERE c.institutionId = ?";
+                      
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, institutionId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    applications.add(extractApplicationFromResultSet(rs));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return applications;
+    }
+
+    @Override
+    public boolean hasExistingApplication(int professionalId, int courseId) {
+        String query = "SELECT COUNT(*) FROM course_applications " +
+                      "WHERE professionalId = ? AND courseId = ? AND status = ?";
+                      
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, professionalId);
+            stmt.setInt(2, courseId);
+            stmt.setString(3, ApplicationStatus.PENDING.toString());
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    @Override
+    public int getApplicationCount(int courseId) {
+        String query = "SELECT COUNT(*) FROM course_applications WHERE courseId = ?";
+        
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, courseId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     private CourseApplication extractApplicationFromResultSet(ResultSet rs) throws SQLException {

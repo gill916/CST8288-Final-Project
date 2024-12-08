@@ -3,6 +3,7 @@ package AcademicExchangePlatform.servlet;
 import AcademicExchangePlatform.model.CourseApplication;
 import AcademicExchangePlatform.model.AcademicProfessional;
 import AcademicExchangePlatform.service.CourseApplicationService;
+import AcademicExchangePlatform.service.CourseService;
 import AcademicExchangePlatform.dbenum.ApplicationStatus;
 
 import javax.servlet.ServletException;
@@ -12,10 +13,33 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 
 public class CourseApplicationServlet extends HttpServlet {
     private final CourseApplicationService applicationService = CourseApplicationService.getInstance();
+    private final CourseService courseService = CourseService.getInstance();
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        String pathInfo = request.getPathInfo();
+        
+        if (pathInfo == null || pathInfo.equals("/")) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        if (pathInfo.startsWith("/view/")) {
+            handleViewApplication(request, response);
+        } else if (pathInfo.equals("/manage")) {
+            handleManageApplications(request, response);
+        } else if (pathInfo.equals("/my-applications")) {
+            handleMyApplications(request, response);
+        } else {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        }
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
@@ -35,6 +59,46 @@ public class CourseApplicationServlet extends HttpServlet {
             default:
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
+    }
+
+    private void handleViewApplication(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        try {
+            int applicationId = Integer.parseInt(request.getPathInfo().substring(6));
+            CourseApplication application = applicationService.getApplicationById(applicationId);
+            
+            if (application != null) {
+                request.setAttribute("application", application);
+                request.getRequestDispatcher("/WEB-INF/views/application/details.jsp")
+                       .forward(request, response);
+                return;
+            }
+        } catch (NumberFormatException e) {
+            // Log error
+        }
+        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+    }
+
+    private void handleManageApplications(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        int courseId = Integer.parseInt(request.getParameter("courseId"));
+        int institutionId = (int) request.getSession().getAttribute("institutionId");
+        
+        List<CourseApplication> applications = applicationService.getApplicationsByCourse(courseId, institutionId);
+        request.setAttribute("applications", applications);
+        request.setAttribute("course", courseService.getCourseById(courseId));
+        
+        request.getRequestDispatcher("/WEB-INF/views/application/manageApplications.jsp")
+               .forward(request, response);
+    }
+
+    private void handleMyApplications(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        AcademicProfessional professional = (AcademicProfessional) request.getSession().getAttribute("user");
+        List<CourseApplication> applications = applicationService.getApplicationsByProfessional(professional.getUserId());
+        request.setAttribute("applications", applications);
+        request.getRequestDispatcher("/WEB-INF/views/application/myApplications.jsp")
+               .forward(request, response);
     }
 
     private void handleSubmitApplication(HttpServletRequest request, HttpServletResponse response) 

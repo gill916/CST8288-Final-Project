@@ -31,6 +31,18 @@ public class CourseApplicationService {
     }
 
     public boolean applyForCourse(CourseApplication application, AcademicProfessional professional) {
+        // Check for existing application
+        List<CourseApplication> existingApplications = 
+            applicationDAO.getApplicationsByProfessional(professional.getUserId());
+        
+        boolean hasExistingApplication = existingApplications.stream()
+            .anyMatch(app -> app.getCourseId() == application.getCourseId() && 
+                           app.getStatus() == ApplicationStatus.PENDING);
+        
+        if (hasExistingApplication) {
+            return false;
+        }
+        
         Course course = courseDAO.getCourseById(application.getCourseId());
         
         if (!canApplyToCourse(professional, course)) {
@@ -99,7 +111,21 @@ public class CourseApplicationService {
 
     private boolean validateApplication(CourseApplication application) {
         return application != null &&
+               application.getCourseId() > 0 &&
+               application.getProfessionalId() > 0 &&
                application.getCoverLetter() != null && 
-               !application.getCoverLetter().trim().isEmpty();
+               !application.getCoverLetter().trim().isEmpty() &&
+               application.getApplicationDate() != null;
+    }
+    public CourseApplication getApplicationById(int applicationId) {
+        return applicationDAO.getApplicationById(applicationId);
+    }
+    public List<CourseApplication> getAllInstitutionApplications(int institutionId) {
+        // First verify the institution exists and is active
+        if (institutionId <= 0) {
+            return null;
+        }
+        
+        return applicationDAO.getAllInstitutionApplications(institutionId);
     }
 } 

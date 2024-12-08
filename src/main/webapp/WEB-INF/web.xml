@@ -40,8 +40,8 @@
         <servlet-class>AcademicExchangePlatform.servlet.HomeServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>ApplicationServlet</servlet-name>
-        <servlet-class>AcademicExchangePlatform.servlet.ApplicationServlet</servlet-class>
+        <servlet-name>LogoutServlet</servlet-name>
+        <servlet-class>AcademicExchangePlatform.servlet.LogoutServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>NotificationServlet</servlet-name>
@@ -76,6 +76,18 @@
     <servlet-mapping>
         <servlet-name>HomeServlet</servlet-name>
         <url-pattern>/home</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>LogoutServlet</servlet-name>
+        <url-pattern>/auth/logout</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>NotificationServlet</servlet-name>
+        <url-pattern>/notification</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ViewCourseServlet</servlet-name>
+        <url-pattern>/course/view/*</url-pattern>
     </servlet-mapping>
 
     <!-- Welcome File List -->

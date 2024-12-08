@@ -127,12 +127,23 @@ public class CourseServlet extends HttpServlet {
         course.setCourseTitle(request.getParameter("courseTitle"));
         course.setCourseCode(request.getParameter("courseCode"));
         course.setTerm(request.getParameter("term"));
-        course.setSchedule(Schedule.valueOf(request.getParameter("schedule")));
-        course.setDeliveryMethod(DeliveryMethod.valueOf(request.getParameter("deliveryMethod")));
+        
+        // Normalize enum values
+        String scheduleStr = request.getParameter("schedule").toUpperCase().replace(" ", "_");
+        String deliveryStr = request.getParameter("deliveryMethod").toUpperCase().replace(" ", "_");
+        String statusStr = request.getParameter("status").toUpperCase().replace(" ", "_");
+        
+        try {
+            course.setSchedule(Schedule.valueOf(scheduleStr));
+            course.setDeliveryMethod(DeliveryMethod.valueOf(deliveryStr));
+            course.setStatus(CourseStatus.valueOf(statusStr));
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid enum value provided: " + e.getMessage());
+        }
+        
         course.setOutline(request.getParameter("outline"));
         course.setPreferredQualifications(request.getParameter("preferredQualifications"));
         course.setCompensation(new BigDecimal(request.getParameter("compensation")));
-        course.setStatus(CourseStatus.valueOf(request.getParameter("status")));
         
         String deadlineStr = request.getParameter("applicationDeadline");
         if (deadlineStr != null && !deadlineStr.isEmpty()) {

@@ -11,4 +11,7 @@ public interface CourseApplicationDAO {
     List<CourseApplication> getApplicationsByCourse(int courseId);
     List<CourseApplication> getApplicationsByProfessional(int professionalId);
     boolean withdrawApplication(int applicationId);
+    List<CourseApplication> getAllInstitutionApplications(int institutionId);
+    boolean hasExistingApplication(int professionalId, int courseId);
+    int getApplicationCount(int courseId);
 } 

@@ -4,6 +4,7 @@ import AcademicExchangePlatform.dbenum.UserType;
 import AcademicExchangePlatform.model.AcademicProfessional;
 import AcademicExchangePlatform.model.AcademicInstitution;
 import AcademicExchangePlatform.model.User;
+import AcademicExchangePlatform.model.UserFactory;
 import AcademicExchangePlatform.service.UserService;
 
 import javax.servlet.ServletException;
@@ -34,19 +35,19 @@ public class RegisterServlet extends HttpServlet {
             String userTypeValue = getRequiredParameter(request, "userType");
 
             UserType userType = UserType.fromValue(userTypeValue);
-            User user;
-
-            if (userType == UserType.PROFESSIONAL) {
-                user = createProfessionalUser(request);
-            } else if (userType == UserType.INSTITUTION) {
-                user = createInstitutionUser(request);
-            } else {
-                throw new IllegalArgumentException("Invalid user type");
-            }
-
+            
+            // Use UserFactory to create the appropriate user type
+            User user = UserFactory.createUser(userType);
             user.setEmail(email);
             user.setPassword(password);
             user.setUserType(userType);
+
+            // Set type-specific fields
+            if (user instanceof AcademicProfessional) {
+                populateProfessionalFields((AcademicProfessional) user, request);
+            } else if (user instanceof AcademicInstitution) {
+                populateInstitutionFields((AcademicInstitution) user, request);
+            }
 
             if (userService.register(user)) {
                 response.sendRedirect(request.getContextPath() + "/auth/login");
@@ -75,20 +76,16 @@ public class RegisterServlet extends HttpServlet {
         request.setAttribute("error", message);
     }
 
-    private AcademicProfessional createProfessionalUser(HttpServletRequest request) {
-        AcademicProfessional professional = new AcademicProfessional();
+    private void populateProfessionalFields(AcademicProfessional professional, HttpServletRequest request) {
         professional.setFirstName(getRequiredParameter(request, "firstName"));
         professional.setLastName(getRequiredParameter(request, "lastName"));
         professional.setCurrentInstitution(getRequiredParameter(request, "currentInstitution"));
         professional.setPosition(getRequiredParameter(request, "academicPosition"));
-        return professional;
     }
 
-    private AcademicInstitution createInstitutionUser(HttpServletRequest request) {
-        AcademicInstitution institution = new AcademicInstitution();
+    private void populateInstitutionFields(AcademicInstitution institution, HttpServletRequest request) {
         institution.setInstitutionName(getRequiredParameter(request, "institutionName"));
         institution.setAddress(getRequiredParameter(request, "address"));
         institution.setContactEmail(getRequiredParameter(request, "contactEmail"));
-        return institution;
     }
 }

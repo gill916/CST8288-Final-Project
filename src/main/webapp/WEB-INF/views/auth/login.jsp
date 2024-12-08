@@ -3,30 +3,29 @@
 <c:set var="title" value="Login" scope="request"/>
 <%@ include file="../../common/header.jsp" %>
 
-<div class="form-container">
-    <h2>Login</h2>
-    <c:if test="${not empty error}">
-        <div class="error-message">
-            ${error}
-        </div>
-    </c:if>
-    <form action="${pageContext.request.contextPath}/auth/login" method="post" class="form-group">
-        <div class="form-group">
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
-        </div>
-
-        <div class="form-group">
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-        </div>
-
-        <button type="submit" class="submit-btn">Login</button>
+<div class="container">
+    <div class="auth-form">
+        <h2>Login</h2>
         
-        <div class="form-footer">
-            <p>Don't have an account? <a href="${pageContext.request.contextPath}/auth/register">Register here</a></p>
-        </div>
-    </form>
+        <c:if test="${not empty error}">
+            <div class="alert alert-danger">${error}</div>
+        </c:if>
+
+        <form action="${pageContext.request.contextPath}/auth/login" method="post">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" class="form-control" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Login</button>
+            <a href="${pageContext.request.contextPath}/auth/register" class="btn btn-link">Register</a>
+        </form>
+    </div>
 </div>
 
-<%@ include file="../../common/footer.jsp" %>
+<%@ include file="../../common/footer.jsp" %> 

@@ -39,6 +39,15 @@ public class LoginServlet extends HttpServlet {
             if (user != null) {
                 HttpSession session = request.getSession();
                 session.setAttribute("user", user);
+                session.setAttribute("userType", user.getUserType().toString());
+                
+                // Set user-specific attributes
+                if (user instanceof AcademicInstitution) {
+                    session.setAttribute("institutionId", user.getUserId());
+                } else if (user instanceof AcademicProfessional) {
+                    session.setAttribute("professionalId", user.getUserId());
+                }
+                
                 response.sendRedirect(request.getContextPath() + "/home");
             } else {
                 request.setAttribute("error", "Invalid email or password");
