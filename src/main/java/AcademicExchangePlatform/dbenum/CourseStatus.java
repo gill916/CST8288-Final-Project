@@ -2,7 +2,9 @@ package AcademicExchangePlatform.dbenum;
 
 public enum CourseStatus {
     ACTIVE("Active"),
-    INACTIVE("Inactive");
+    INACTIVE("Inactive"),
+    FILLED("Filled"),
+    EXPIRED("Expired");
 
     private final String value;
 
@@ -12,5 +14,10 @@ public enum CourseStatus {
 
     public String getValue() {
         return value;
+    }
+
+    @Override
+    public String toString() {
+        return name();
     }
 } 

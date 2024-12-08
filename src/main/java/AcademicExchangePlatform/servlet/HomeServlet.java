@@ -9,7 +9,9 @@ import javax.servlet.http.HttpSession;
 import AcademicExchangePlatform.model.User;
 import AcademicExchangePlatform.service.UserService;
 import AcademicExchangePlatform.dbenum.UserType;
+import javax.servlet.annotation.WebServlet;
 
+@WebServlet("/home")
 public class HomeServlet extends HttpServlet {
     private final UserService userService = UserService.getInstance();
 

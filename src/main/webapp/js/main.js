@@ -221,13 +221,23 @@ function validateCourseForm() {
     const required = [
         'courseTitle',
         'courseCode',
-        'description',
-        'startDate',
-        'endDate',
+        'term',
+        'schedule',
+        'deliveryMethod',
+        'outline',
+        'compensation',
         'applicationDeadline'
     ];
     
-    return validateRequiredFields(required);
+    for (const field of required) {
+        const input = document.querySelector(`[name="${field}"]`);
+        if (!input || !input.value.trim()) {
+            showToast(`Please fill in the ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`, 'error');
+            if (input) input.focus();
+            return false;
+        }
+    }
+    return true;
 }
 
 // Date validation for course form

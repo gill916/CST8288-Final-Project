@@ -1,9 +1,9 @@
 package AcademicExchangePlatform.dbenum;
 
-
 public enum UserType {
     PROFESSIONAL("Professional"),
-    INSTITUTION("Institution");
+    INSTITUTION("Institution"),
+    ADMIN("Administrator");
 
     private final String value;
 
@@ -22,5 +22,10 @@ public enum UserType {
             }
         }
         throw new IllegalArgumentException("Invalid user type: " + value);
+    }
+
+    @Override
+    public String toString() {
+        return name();
     }
 }

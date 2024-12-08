@@ -10,9 +10,11 @@
 </head>
 <body>
     <%
-    if (session.getAttribute("user") == null && !request.getRequestURI().endsWith("/login.jsp") 
-        && !request.getRequestURI().endsWith("/register.jsp") 
-        && !request.getRequestURI().endsWith("/index.jsp")) {
+    if (session.getAttribute("user") == null && 
+        !request.getRequestURI().endsWith("/login.jsp") && 
+        !request.getRequestURI().endsWith("/registration.jsp") && 
+        !request.getRequestURI().endsWith("/index.jsp") &&
+        !request.getRequestURI().contains("/notification")) {
         response.sendRedirect(request.getContextPath() + "/auth/login");
         return;
     }
@@ -37,7 +39,7 @@
                     </c:if>
                     
                     <a class="nav-link" href="${pageContext.request.contextPath}/profile">Profile</a>
-                    <a class="nav-link position-relative" href="${pageContext.request.contextPath}/notification">
+                    <a class="nav-link position-relative" href="${pageContext.request.contextPath}/notification/notifications">
                         Notifications
                         <c:if test="${sessionScope.unreadNotifications > 0}">
                             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">

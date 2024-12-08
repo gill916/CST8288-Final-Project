@@ -12,7 +12,7 @@ public class CourseApplicationDAOImpl implements CourseApplicationDAO {
 
     @Override
     public boolean createApplication(CourseApplication application) {
-        String query = "INSERT INTO course_applications (courseId, professionalId, coverLetter, " +
+        String query = "INSERT INTO courseapplications (courseId, professionalId, coverLetter, " +
                       "additionalDocuments, applicationDate, status) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -36,8 +36,7 @@ public class CourseApplicationDAOImpl implements CourseApplicationDAO {
             conn = DatabaseConnection.getInstance().getConnection();
             conn.setAutoCommit(false);
             
-            // Update status
-            String query = "UPDATE course_applications SET status = ? WHERE applicationId = ?";
+            String query = "UPDATE courseapplications SET status = ? WHERE applicationId = ?";
             try (PreparedStatement stmt = conn.prepareStatement(query)) {
                 stmt.setString(1, status.toString());
                 stmt.setInt(2, applicationId);
@@ -72,7 +71,7 @@ public class CourseApplicationDAOImpl implements CourseApplicationDAO {
 
     @Override
     public CourseApplication getApplicationById(int applicationId) {
-        String query = "SELECT * FROM course_applications WHERE applicationId = ?";
+        String query = "SELECT * FROM courseapplications WHERE applicationId = ?";
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, applicationId);
@@ -90,7 +89,7 @@ public class CourseApplicationDAOImpl implements CourseApplicationDAO {
     @Override
     public List<CourseApplication> getApplicationsByCourse(int courseId) {
         List<CourseApplication> applications = new ArrayList<>();
-        String query = "SELECT * FROM course_applications WHERE courseId = ?";
+        String query = "SELECT * FROM courseapplications WHERE courseId = ?";
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, courseId);
@@ -108,7 +107,7 @@ public class CourseApplicationDAOImpl implements CourseApplicationDAO {
     @Override
     public List<CourseApplication> getApplicationsByProfessional(int professionalId) {
         List<CourseApplication> applications = new ArrayList<>();
-        String query = "SELECT * FROM course_applications WHERE professionalId = ?";
+        String query = "SELECT * FROM courseapplications WHERE professionalId = ?";
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, professionalId);
@@ -131,7 +130,7 @@ public class CourseApplicationDAOImpl implements CourseApplicationDAO {
     @Override
     public List<CourseApplication> getAllInstitutionApplications(int institutionId) {
         List<CourseApplication> applications = new ArrayList<>();
-        String query = "SELECT ca.* FROM course_applications ca " +
+        String query = "SELECT ca.* FROM courseapplications ca " +
                       "JOIN courses c ON ca.courseId = c.courseId " +
                       "WHERE c.institutionId = ?";
                       
@@ -151,7 +150,7 @@ public class CourseApplicationDAOImpl implements CourseApplicationDAO {
 
     @Override
     public boolean hasExistingApplication(int professionalId, int courseId) {
-        String query = "SELECT COUNT(*) FROM course_applications " +
+        String query = "SELECT COUNT(*) FROM courseapplications " +
                       "WHERE professionalId = ? AND courseId = ? AND status = ?";
                       
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -172,7 +171,7 @@ public class CourseApplicationDAOImpl implements CourseApplicationDAO {
 
     @Override
     public int getApplicationCount(int courseId) {
-        String query = "SELECT COUNT(*) FROM course_applications WHERE courseId = ?";
+        String query = "SELECT COUNT(*) FROM courseapplications WHERE courseId = ?";
         
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -196,7 +195,26 @@ public class CourseApplicationDAOImpl implements CourseApplicationDAO {
         application.setCoverLetter(rs.getString("coverLetter"));
         application.setAdditionalDocuments(rs.getString("additionalDocuments"));
         application.setApplicationDate(rs.getTimestamp("applicationDate"));
+        application.setDecisionDate(rs.getTimestamp("decisionDate"));
         application.setStatus(ApplicationStatus.valueOf(rs.getString("status")));
         return application;
     }
+
+    @Override
+    public boolean updateApplication(CourseApplication application) {
+        String sql = "UPDATE courseapplications SET status = ?, decisionDate = ? WHERE applicationId = ?";
+
+        try (Connection connection = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, application.getStatus().name());
+            statement.setTimestamp(2, application.getDecisionDate() != null
+                    ? new Timestamp(application.getDecisionDate().getTime()) : null);
+            statement.setInt(3, application.getApplicationId());
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 } 

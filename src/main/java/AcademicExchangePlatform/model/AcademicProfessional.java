@@ -1,6 +1,7 @@
 package AcademicExchangePlatform.model;
 
 import java.util.List;
+import java.util.ArrayList;
 
 public class AcademicProfessional extends User {
     private String firstName;
@@ -60,7 +61,8 @@ public class AcademicProfessional extends User {
     }
 
     public boolean isProfileComplete() {
-        return firstName != null && !firstName.isEmpty() &&
+        return isProfileComplete && 
+               firstName != null && !firstName.isEmpty() &&
                lastName != null && !lastName.isEmpty() &&
                currentInstitution != null && !currentInstitution.isEmpty() &&
                position != null && !position.isEmpty() &&
@@ -76,6 +78,7 @@ public class AcademicProfessional extends User {
         this.position = position;
         this.currentInstitution = currentInstitution;
         this.educationBackground = educationBackground;
-        this.expertise = expertise;
+        this.expertise = new ArrayList<>(expertise);
+        this.isProfileComplete = true;
     }
 }

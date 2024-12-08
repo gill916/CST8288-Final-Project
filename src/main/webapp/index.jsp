@@ -15,7 +15,7 @@
             
             <div class="welcome-buttons">
                 <a href="${pageContext.request.contextPath}/auth/login" class="btn btn-primary btn-lg me-3">Login</a>
-                <a href="${pageContext.request.contextPath}/auth/register" class="btn btn-outline-primary btn-lg">Register</a>
+                <a href="${pageContext.request.contextPath}/auth/registration" class="btn btn-outline-primary btn-lg">Register</a>
             </div>
             
             <div class="features mt-5">

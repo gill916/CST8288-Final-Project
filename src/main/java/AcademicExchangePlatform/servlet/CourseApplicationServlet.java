@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.List;
 
 
+@WebServlet("/application/*")
 public class CourseApplicationServlet extends HttpServlet {
     private final CourseApplicationService applicationService = CourseApplicationService.getInstance();
     private final CourseService courseService = CourseService.getInstance();
@@ -68,13 +69,16 @@ public class CourseApplicationServlet extends HttpServlet {
             CourseApplication application = applicationService.getApplicationById(applicationId);
             
             if (application != null) {
-                request.setAttribute("application", application);
-                request.getRequestDispatcher("/WEB-INF/views/application/details.jsp")
-                       .forward(request, response);
-                return;
+                AcademicProfessional professional = (AcademicProfessional) request.getSession().getAttribute("user");
+                if (professional != null && application.getProfessionalId() == professional.getUserId()) {
+                    request.setAttribute("application", application);
+                    request.getRequestDispatcher("/WEB-INF/views/application/details.jsp")
+                           .forward(request, response);
+                    return;
+                }
             }
         } catch (NumberFormatException e) {
-            // Log error
+            e.printStackTrace();
         }
         response.sendError(HttpServletResponse.SC_NOT_FOUND);
     }

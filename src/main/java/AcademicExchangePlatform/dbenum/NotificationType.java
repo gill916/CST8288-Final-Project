@@ -4,5 +4,10 @@ public enum NotificationType {
     APPLICATION_STATUS,
     NEW_COURSE,
     DEADLINE_REMINDER,
-    SYSTEM
+    SYSTEM;
+
+    @Override
+    public String toString() {
+        return name();
+    }
 } 

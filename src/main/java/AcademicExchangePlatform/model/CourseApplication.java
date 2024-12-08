@@ -7,6 +7,7 @@ public class CourseApplication {
     private int applicationId;
     private int courseId;
     private int professionalId;
+    private Date decisionDate;
     private Date applicationDate;
     private ApplicationStatus status;
     private String coverLetter;
@@ -68,4 +69,12 @@ public class CourseApplication {
     public void setAdditionalDocuments(String additionalDocuments) {
         this.additionalDocuments = additionalDocuments;
     }
+    public Date getDecisionDate() {
+        return decisionDate;
+    }
+
+    public void setDecisionDate(Date decisionDate) {
+        this.decisionDate = decisionDate;
+    }
+
 } 

@@ -4,5 +4,10 @@ public enum ApplicationStatus {
     PENDING,
     ACCEPTED,
     REJECTED,
-    WITHDRAWN
+    WITHDRAWN;
+
+    @Override
+    public String toString() {
+        return name();
+    }
 } 

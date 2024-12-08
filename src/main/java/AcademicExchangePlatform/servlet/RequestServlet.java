@@ -11,6 +11,7 @@ import AcademicExchangePlatform.model.Request;
 import AcademicExchangePlatform.service.RequestService;
 
 
+@WebServlet("/request/*")
 public class RequestServlet extends HttpServlet {
 
     private final RequestService requestService = RequestService.getInstance();
@@ -145,13 +146,13 @@ public class RequestServlet extends HttpServlet {
             throws IOException, SQLException, ClassNotFoundException {
         int requestId = Integer.parseInt(request.getParameter("requestId"));
         this.requestService.cancelRequestById(requestId);
-        response.sendRedirect("/Requests");
+        response.sendRedirect("/request");
     }
 
     private void handleRequestStatusChange(HttpServletRequest request, HttpServletResponse response, String status)
             throws IOException, SQLException, ClassNotFoundException {
         int requestId = Integer.parseInt(request.getParameter("requestId"));
         this.requestService.handleRequest(requestId, status);
-        response.sendRedirect("/Requests");
+        response.sendRedirect("/request");
     }
 }

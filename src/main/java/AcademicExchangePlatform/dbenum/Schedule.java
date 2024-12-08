@@ -1,9 +1,9 @@
 package AcademicExchangePlatform.dbenum;
 
 public enum Schedule {
-    Morning,
-    Afternoon,
-    Evening;
+    MORNING,
+    AFTERNOON,
+    EVENING;
 
     @Override
     public String toString() {

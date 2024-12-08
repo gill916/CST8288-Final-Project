@@ -11,7 +11,7 @@
             <div class="alert alert-danger">${error}</div>
         </c:if>
 
-        <form action="${pageContext.request.contextPath}/auth/register" method="post" id="registrationForm" onsubmit="return validateForm()">
+        <form action="${pageContext.request.contextPath}/auth/registration" method="post" id="registrationForm" onsubmit="return validateForm()">
             <div class="form-group">
                 <label>User Type</label>
                 <select name="userType" class="form-control" onchange="toggleUserTypeFields()" required>

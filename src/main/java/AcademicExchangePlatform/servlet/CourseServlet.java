@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@WebServlet({"/course/create", "/course/edit/*", "/course/manage"})
 public class CourseServlet extends HttpServlet {
     private final CourseService courseService = CourseService.getInstance();
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -27,22 +28,33 @@ public class CourseServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        String pathInfo = request.getPathInfo();
+        String pathInfo = request.getRequestURI().substring(request.getContextPath().length());
         User user = (User) request.getSession().getAttribute("user");
+        
+        System.out.println("DEBUG: Full URI: " + request.getRequestURI());
+        System.out.println("DEBUG: Context Path: " + request.getContextPath());
+        System.out.println("DEBUG: Path Info: " + pathInfo);
+        System.out.println("DEBUG: Schedules: " + Arrays.toString(Schedule.values()));
+        System.out.println("DEBUG: Delivery Methods: " + Arrays.toString(DeliveryMethod.values()));
         
         if (user == null || !user.getUserType().equals(UserType.INSTITUTION)) {
             response.sendRedirect(request.getContextPath() + "/auth/login");
             return;
         }
 
-        System.out.println("DEBUG: CourseServlet pathInfo: " + pathInfo);
-
-        if (pathInfo == null || pathInfo.equals("/") || pathInfo.equals("/manage")) {
-            handleManageCourses(request, response);
-        } else if ("/create".equals(pathInfo)) {
+        if (pathInfo.equals("/course/create")) {
+            Course newCourse = new Course();
+            System.out.println("DEBUG: New Course Object: " + newCourse);
+            request.setAttribute("course", newCourse);
+            request.setAttribute("schedules", Schedule.values());
+            request.setAttribute("deliveryMethods", DeliveryMethod.values());
+            System.out.println("DEBUG: Request Attributes Set");
+            System.out.println("DEBUG: Course: " + request.getAttribute("course"));
+            System.out.println("DEBUG: Schedules: " + request.getAttribute("schedules"));
+            System.out.println("DEBUG: DeliveryMethods: " + request.getAttribute("deliveryMethods"));
             request.getRequestDispatcher("/WEB-INF/views/course/form.jsp").forward(request, response);
-        } else if (pathInfo.startsWith("/view/")) {
-            handleViewCourse(request, response);
+        } else if (pathInfo.equals("/course/manage")) {
+            handleManageCourses(request, response);
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
@@ -55,12 +67,14 @@ public class CourseServlet extends HttpServlet {
         String termFilter = request.getParameter("term");
         
         System.out.println("DEBUG: Handling manage courses");
+        System.out.println("DEBUG: User Type: " + user.getUserType());
         System.out.println("DEBUG: User ID: " + user.getUserId());
         System.out.println("DEBUG: Status Filter: " + statusFilter);
         System.out.println("DEBUG: Term Filter: " + termFilter);
         
         // Get courses for the institution
         List<Course> courses = courseService.getCoursesByInstitution(user.getUserId());
+        System.out.println("DEBUG: SQL Query executed for institution ID: " + user.getUserId());
         System.out.println("DEBUG: Retrieved courses: " + courses);
         
         // Filter courses if status parameter is present
@@ -118,7 +132,10 @@ public class CourseServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/course/manage");
         } catch (Exception e) {
             request.setAttribute("error", "Error: " + e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/views/course/manage.jsp").forward(request, response);
+            // Add back the form options
+            request.setAttribute("schedules", Schedule.values());
+            request.setAttribute("deliveryMethods", DeliveryMethod.values());
+            request.getRequestDispatcher("/WEB-INF/views/course/form.jsp").forward(request, response);
         }
     }
 
@@ -128,15 +145,16 @@ public class CourseServlet extends HttpServlet {
         course.setCourseCode(request.getParameter("courseCode"));
         course.setTerm(request.getParameter("term"));
         
+        // Set default status to ACTIVE for new courses
+        course.setStatus(CourseStatus.ACTIVE);
+        
         // Normalize enum values
         String scheduleStr = request.getParameter("schedule").toUpperCase().replace(" ", "_");
         String deliveryStr = request.getParameter("deliveryMethod").toUpperCase().replace(" ", "_");
-        String statusStr = request.getParameter("status").toUpperCase().replace(" ", "_");
         
         try {
             course.setSchedule(Schedule.valueOf(scheduleStr));
             course.setDeliveryMethod(DeliveryMethod.valueOf(deliveryStr));
-            course.setStatus(CourseStatus.valueOf(statusStr));
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid enum value provided: " + e.getMessage());
         }

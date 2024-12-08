@@ -9,7 +9,7 @@
         <div class="section-header d-flex justify-content-between align-items-center">
             <h2>Notifications</h2>
             <c:if test="${not empty notifications}">
-                <form action="${pageContext.request.contextPath}/notification" method="post" class="d-inline">
+                <form action="${pageContext.request.contextPath}/notification/notifications" method="post" class="d-inline">
                     <input type="hidden" name="action" value="markAllRead">
                     <button type="submit" class="btn btn-secondary">Mark All as Read</button>
                 </form>
@@ -41,7 +41,7 @@
                             
                             <div class="notification-actions">
                                 <c:if test="${not notification.read}">
-                                    <form action="${pageContext.request.contextPath}/notification" 
+                                    <form action="${pageContext.request.contextPath}/notification/notifications" 
                                           method="post" class="d-inline">
                                         <input type="hidden" name="action" value="markRead">
                                         <input type="hidden" name="notificationId" 
@@ -51,7 +51,7 @@
                                         </button>
                                     </form>
                                 </c:if>
-                                <form action="${pageContext.request.contextPath}/notification" 
+                                <form action="${pageContext.request.contextPath}/notification/notifications" 
                                       method="post" class="d-inline">
                                     <input type="hidden" name="action" value="delete">
                                     <input type="hidden" name="notificationId" 

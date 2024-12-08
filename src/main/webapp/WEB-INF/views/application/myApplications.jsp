@@ -12,7 +12,7 @@
             <c:forEach items="${applications}" var="application">
                 <div class="application-card">
                     <div class="application-header">
-                        <h3>${application.course.courseTitle}</h3>
+                        <h3>${not empty application.course ? application.course.courseTitle : 'N/A'}</h3>
                         <span class="badge bg-${application.status == 'PENDING' ? 'warning' : 
                             application.status == 'ACCEPTED' ? 'success' : 
                             application.status == 'WITHDRAWN' ? 'secondary' : 'danger'}">
@@ -25,7 +25,7 @@
                             <fmt:formatDate value="${application.applicationDate}" 
                                           pattern="MMMM d, yyyy"/>
                         </p>
-                        <p><strong>Institution:</strong> ${application.course.institutionName}</p>
+                        <p><strong>Institution:</strong> ${not empty application.course ? application.course.institutionName : 'N/A'}</p>
                     </div>
 
                     <div class="application-actions">

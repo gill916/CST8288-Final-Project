@@ -57,6 +57,13 @@
                 <div class="card-actions">
                     <a href="${pageContext.request.contextPath}/course/view/${course.courseId}" 
                        class="btn btn-primary">View Details</a>
+                    <form action="${pageContext.request.contextPath}/application/apply" method="post" class="d-inline">
+                        <input type="hidden" name="courseId" value="${course.courseId}">
+                        <button type="submit" class="btn btn-success" 
+                                onclick="return confirm('Are you sure you want to apply for this course?')">
+                            Apply Now
+                        </button>
+                    </form>
                 </div>
             </div>
         </c:forEach>

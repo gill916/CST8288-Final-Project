@@ -501,4 +501,42 @@ body {
     border: 1px solid #e9ecef;
     border-radius: 8px;
     margin-bottom: 1.5rem;
+}
+
+/* Error Page Styles */
+.error-section {
+    text-align: center;
+    padding: 3rem 2rem;
+}
+
+.error-code {
+    font-size: 4rem;
+    font-weight: bold;
+    color: #dc3545;
+    margin-bottom: 1rem;
+}
+
+.error-details {
+    max-width: 600px;
+    margin: 0 auto 2rem;
+}
+
+.error-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.error-message {
+    color: #6c757d;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+/* Add to existing .profile-section */
+.profile-section.error-section {
+    max-width: 600px;
+    margin: 3rem auto;
+    text-align: center;
 } 

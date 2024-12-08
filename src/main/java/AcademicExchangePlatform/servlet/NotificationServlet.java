@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.List;
 
 
+@WebServlet(urlPatterns = {"/notification", "/notification/*"})
 public class NotificationServlet extends HttpServlet {
     private final NotificationService notificationService = NotificationService.getInstance();
 
@@ -18,8 +19,16 @@ public class NotificationServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         
+        // Check if user is logged in
+        Object userIdObj = request.getSession().getAttribute("userId");
+        if (userIdObj == null) {
+            System.out.println("DEBUG: No userId in session");
+            response.sendRedirect(request.getContextPath() + "/auth/login");
+            return;
+        }
+        
+        int userId = (int) userIdObj;
         String pathInfo = request.getPathInfo();
-        int userId = (int) request.getSession().getAttribute("userId");
 
         if ("/count".equals(pathInfo)) {
             // AJAX endpoint for getting unread count
@@ -28,21 +37,35 @@ public class NotificationServlet extends HttpServlet {
             return;
         }
 
-        // Get notifications for display
-        List<Notification> notifications = notificationService.getNotificationsByUserId(userId);
-        request.setAttribute("notifications", notifications);
-        request.setAttribute("unreadCount", notificationService.getUnreadCount(userId));
-        
-        request.getRequestDispatcher("/WEB-INF/views/notification/notifications.jsp")
-               .forward(request, response);
+        try {
+            // Get notifications for display
+            List<Notification> notifications = notificationService.getNotificationsByUserId(userId);
+            request.setAttribute("notifications", notifications);
+            request.setAttribute("unreadCount", notificationService.getUnreadCount(userId));
+            
+            request.getRequestDispatcher("/WEB-INF/views/notification/notifications.jsp")
+                   .forward(request, response);
+        } catch (Exception e) {
+            System.out.println("DEBUG: Error in NotificationServlet: " + e.getMessage());
+            e.printStackTrace();
+            request.getSession().setAttribute("error", "Error loading notifications: " + e.getMessage());
+            response.sendRedirect(request.getContextPath() + "/home");
+        }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         
+        // Check if user is logged in
+        Object userIdObj = request.getSession().getAttribute("userId");
+        if (userIdObj == null) {
+            response.sendRedirect(request.getContextPath() + "/auth/login");
+            return;
+        }
+        
+        int userId = (int) userIdObj;
         String action = request.getParameter("action");
-        int userId = (int) request.getSession().getAttribute("userId");
 
         switch (action) {
             case "markRead":
@@ -70,7 +93,7 @@ public class NotificationServlet extends HttpServlet {
             response.getWriter().write("{\"success\":true}");
         } else {
             // Otherwise redirect back to notifications page
-            response.sendRedirect(request.getContextPath() + "/notifications");
+            response.sendRedirect(request.getContextPath() + "/notification");
         }
     }
 }

@@ -25,8 +25,8 @@
                 <h3>Profile Completion</h3>
                 <div class="progress">
                     <div class="progress-bar" role="progressbar" 
-                         style="width: ${user.isProfileComplete() ? '100' : '50'}%">
-                        ${user.isProfileComplete() ? 'Complete' : 'Incomplete'}
+                         style="width: ${user.profileComplete ? '100' : '50'}%">
+                        ${user.profileComplete ? 'Complete' : 'Incomplete'}
                     </div>
                 </div>
             </div>

@@ -10,13 +10,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 
+@WebServlet("/course/view/*")
 public class ViewCourseServlet extends HttpServlet {
     private final CourseService courseService = CourseService.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        int courseId = Integer.parseInt(request.getParameter("id"));
+        String pathInfo = request.getPathInfo();
+        int courseId = Integer.parseInt(pathInfo.substring(1));
         Course course = courseService.getCourseById(courseId);
         
         if (course == null) {

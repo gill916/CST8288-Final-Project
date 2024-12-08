@@ -4,7 +4,7 @@ import AcademicExchangePlatform.model.CourseApplication;
 import AcademicExchangePlatform.model.Course;
 import AcademicExchangePlatform.service.CourseApplicationService;
 import AcademicExchangePlatform.service.CourseService;
-import AcademicExchangePlatform.model.Course;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.List;
 
 
+@WebServlet("/application/manage/*")
 public class ManageApplicationsServlet extends HttpServlet {
     private final CourseApplicationService applicationService = CourseApplicationService.getInstance();
     private final CourseService courseService = CourseService.getInstance();

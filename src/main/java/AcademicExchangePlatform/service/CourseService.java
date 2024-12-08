@@ -58,6 +58,7 @@ public class CourseService {
     }
 
     public List<Course> getCoursesByInstitution(int institutionId) {
+        System.out.println("DEBUG: Fetching courses for institution ID: " + institutionId);
         try {
             return courseDAO.getCoursesByInstitution(institutionId);
         } catch (Exception e) {

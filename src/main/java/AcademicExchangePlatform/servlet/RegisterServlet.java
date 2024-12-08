@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@WebServlet("/auth/registration")
 public class RegisterServlet extends HttpServlet {
     private final UserService userService = UserService.getInstance();
 

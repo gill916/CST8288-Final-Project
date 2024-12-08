@@ -7,7 +7,21 @@
     <div class="profile-section">
         <h2>Professional Profile</h2>
         
-        <form action="${pageContext.request.contextPath}/profile/update" method="post" 
+        <!-- Add message display -->
+        <c:if test="${not empty sessionScope.successMessage}">
+            <div class="alert alert-success">
+                ${sessionScope.successMessage}
+                <% session.removeAttribute("successMessage"); %>
+            </div>
+        </c:if>
+        <c:if test="${not empty sessionScope.errorMessage}">
+            <div class="alert alert-danger">
+                ${sessionScope.errorMessage}
+                <% session.removeAttribute("errorMessage"); %>
+            </div>
+        </c:if>
+        
+        <form action="${pageContext.request.contextPath}/profile" method="post" 
               onsubmit="return validateProfileForm('PROFESSIONAL')">
             <!-- Personal Information -->
             <div class="row">
@@ -50,7 +64,7 @@
             <div class="form-group">
                 <label>Areas of Expertise</label>
                 <input type="text" name="expertise" class="form-control" 
-                       value="${user.expertise.join(',')}" 
+                       value="${not empty user.expertise ? String.join(', ', user.expertise) : ''}" 
                        placeholder="Separate with commas" required>
             </div>
 
