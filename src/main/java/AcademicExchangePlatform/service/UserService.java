@@ -11,6 +11,7 @@ import java.util.List;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Collections;
 
 public class UserService {
     private static UserService instance;
@@ -49,6 +50,10 @@ public class UserService {
         if (user != null && user.getPassword().equals(password) && "ACTIVE".equals(user.getStatus())) {
             user.setLastLogin(new Date());
             userDAO.updateUser(user);
+            
+            if (user instanceof AcademicProfessional) {
+                return getProfessionalById(user.getUserId());
+            }
             return user;
         }
         return null;
@@ -154,5 +159,14 @@ public class UserService {
             }
         }
         return false;
+    }
+
+    public List<AcademicProfessional> getAllProfessionals() {
+        try {
+            return userDAO.getAllProfessionals();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Collections.emptyList();
+        }
     }
 }

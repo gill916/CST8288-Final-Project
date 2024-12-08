@@ -8,6 +8,7 @@ import AcademicExchangePlatform.dbenum.CourseStatus;
 import AcademicExchangePlatform.dbenum.DeliveryMethod;
 import AcademicExchangePlatform.model.CourseSearchCriteria;
 import AcademicExchangePlatform.service.UserService;
+import AcademicExchangePlatform.model.NotificationObserverImpl;
 
 import java.util.List;
 import java.util.Date;
@@ -18,9 +19,12 @@ import java.util.Set;
 public class CourseService {
     private static CourseService instance;
     private final CourseDAO courseDAO;
+    private final NotificationService notificationService;
 
     private CourseService() {
         this.courseDAO = new CourseDAOImpl();
+        this.notificationService = NotificationService.getInstance();
+        notificationService.registerObserver(new NotificationObserverImpl("NEW_COURSE"));
     }
 
     public static CourseService getInstance() {
@@ -37,6 +41,15 @@ public class CourseService {
             }
             course.setStatus(CourseStatus.ACTIVE);
             courseDAO.createCourse(course);
+            List<AcademicProfessional> professionals = UserService.getInstance().getAllProfessionals();
+            for (AcademicProfessional professional : professionals) {
+                notificationService.notifyObservers(
+                    "New course available: " + course.getCourseTitle(),
+                    professional.getUserId(),
+                    "NEW_COURSE",
+                    String.valueOf(course.getCourseId())
+                );
+            }
             return true;
         } catch (Exception e) {
             e.printStackTrace();

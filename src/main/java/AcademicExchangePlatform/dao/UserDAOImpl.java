@@ -332,4 +332,27 @@ public class UserDAOImpl implements UserDAO {
       
         return null;
     }
+
+    @Override
+    public List<AcademicProfessional> getAllProfessionals() {
+        List<AcademicProfessional> professionals = new ArrayList<>();
+        String sql = "SELECT u.*, ap.* FROM Users u " +
+                     "JOIN AcademicProfessionals ap ON u.userId = ap.userId " +
+                     "WHERE u.userType = 'PROFESSIONAL' AND u.status = 'ACTIVE'";
+        
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            
+            while (rs.next()) {
+                AcademicProfessional professional = (AcademicProfessional) loadUserFromResultSet(rs);
+                if (professional != null) {
+                    professionals.add(professional);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return professionals;
+    }
 }
