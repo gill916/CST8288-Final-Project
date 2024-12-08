@@ -12,6 +12,8 @@ import AcademicExchangePlatform.dbenum.CourseStatus;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 public class CourseApplicationService {
     private static CourseApplicationService instance;
@@ -165,5 +167,30 @@ public class CourseApplicationService {
             return null;
         }
         return applicationDAO.getAllInstitutionApplications(institutionId);
+    }
+
+    public Map<String, Integer> getApplicationStatistics(int professionalId) {
+        List<CourseApplication> applications = applicationDAO.getApplicationsByProfessional(professionalId);
+        Map<String, Integer> stats = new HashMap<>();
+        
+        stats.put("pending", 0);
+        stats.put("accepted", 0);
+        stats.put("rejected", 0);
+        
+        for (CourseApplication app : applications) {
+            switch (app.getStatus()) {
+                case PENDING:
+                    stats.put("pending", stats.get("pending") + 1);
+                    break;
+                case ACCEPTED:
+                    stats.put("accepted", stats.get("accepted") + 1);
+                    break;
+                case REJECTED:
+                    stats.put("rejected", stats.get("rejected") + 1);
+                    break;
+            }
+        }
+        
+        return stats;
     }
 }

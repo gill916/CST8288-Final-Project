@@ -82,27 +82,22 @@ public class ProfileServlet extends HttpServlet {
             String position = request.getParameter("position");
             String currentInstitution = request.getParameter("currentInstitution");
             String educationBackground = request.getParameter("educationBackground");
-            String expertiseStr = request.getParameter("expertise");
+            String[] expertiseArray = request.getParameterValues("expertise");
+            List<String> expertise = new ArrayList<>();
             
-            // Debug logging
-            System.out.println("DEBUG: Updating professional profile");
-            System.out.println("DEBUG: Position: " + position);
-            System.out.println("DEBUG: Current Institution: " + currentInstitution);
-            System.out.println("DEBUG: Education Background: " + educationBackground);
-            System.out.println("DEBUG: Expertise String: " + expertiseStr);
-
-            // Handle null or empty expertise string
-            List<String> expertise;
-            if (expertiseStr != null && !expertiseStr.trim().isEmpty()) {
-                expertise = Arrays.asList(expertiseStr.split("\\s*,\\s*")); // Split and trim
-                System.out.println("DEBUG: Parsed expertise list: " + expertise);
-            } else {
-                expertise = new ArrayList<>();
-                System.out.println("DEBUG: Empty expertise list created");
+            if (expertiseArray != null) {
+                expertise = Arrays.asList(expertiseArray);
             }
 
             professional.completeProfile(position, currentInstitution, educationBackground, expertise);
-            System.out.println("DEBUG: Profile update completed");
+            
+            // Update the database with the new profile completion status
+            userService.updateUser(professional);
+            
+            // Update the session attribute to reflect the changes
+            request.getSession().setAttribute("user", professional);
+            
+            System.out.println("DEBUG: Profile update completed and persisted");
         } catch (Exception e) {
             System.out.println("DEBUG: Error in updateProfessionalProfile: " + e.getMessage());
             e.printStackTrace();

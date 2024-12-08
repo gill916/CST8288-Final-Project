@@ -10,15 +10,20 @@ public class Notification {
     private String type;
     private boolean isRead;
     private Date dateSent;
+    private String referenceId;
 
-    // Constructors
+    // Default constructor
     public Notification() {}
 
-    public Notification(int userId, String message, String type, String referenceId) {
+    // Constructor for creating new notifications
+    public Notification(int userId, String title, String message, String type, String referenceId) {
         this.userId = userId;
+        this.title = title;
         this.message = message;
         this.type = type;
-        this.title = type; // Using type as title temporarily
+        this.referenceId = referenceId;
+        this.isRead = false;
+        this.dateSent = new Date();
     }
 
     // Getters and Setters

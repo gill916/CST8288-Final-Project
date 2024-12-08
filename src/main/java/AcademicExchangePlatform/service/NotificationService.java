@@ -48,16 +48,8 @@ public class NotificationService implements Subject {
         }
     }
 
-    public boolean createNotification(Notification notification) {
-        boolean success = notificationDAO.createNotification(notification);
-        if (success) {
-            // Use decorator chain for notifications without creating new notifications
-            smsDecorator.notifyObservers(notification.getMessage(), 
-                                     notification.getUserId(),
-                                     notification.getType(),
-                                     notification.getRelatedEntityId());
-        }
-        return success;
+    public void createNotification(Notification notification) {
+        notificationDAO.createNotification(notification);
     }
 
     // Database operations
@@ -86,11 +78,11 @@ public class NotificationService implements Subject {
     }
 
     // Business notification methods
-    public void notifyApplicationStatusChange(CourseApplication application, String status) {
+    public void notifyApplicationStatusChange(CourseApplication application, String newStatus) {
         Notification notification = new Notification(
             application.getProfessionalId(),
-            String.format("Your application for course %s has been %s", 
-                application.getCourseId(), status.toLowerCase()),
+            "Application Status Update",
+            String.format("Your application status has been updated to: %s", newStatus),
             "APPLICATION_STATUS",
             String.valueOf(application.getApplicationId())
         );
@@ -100,6 +92,7 @@ public class NotificationService implements Subject {
     public void notifyNewApplication(CourseApplication application, Course course) {
         Notification notification = new Notification(
             course.getInstitutionId(),
+            "New Course Application",
             String.format("New application received for course: %s", course.getCourseTitle()),
             "NEW_APPLICATION",
             String.valueOf(application.getApplicationId())
@@ -110,6 +103,7 @@ public class NotificationService implements Subject {
     public void notifyApplicationDeadlineApproaching(Course course, int daysRemaining) {
         Notification notification = new Notification(
             course.getInstitutionId(),
+            String.format("Deadline Approaching"),
             String.format("Application deadline for %s is approaching (%d days remaining)", 
                 course.getCourseTitle(), daysRemaining),
             "DEADLINE_REMINDER",
@@ -121,9 +115,10 @@ public class NotificationService implements Subject {
     public void notifyProfileIncomplete(int userId) {
         Notification notification = new Notification(
             userId,
-            "Please complete your profile to apply for courses",
-            "PROFILE_REMINDER",
-            null
+            "Profile Incomplete",
+            "Please complete your profile to enhance your application.",
+            "SYSTEM",
+            String.valueOf(userId)
         );
         createNotification(notification);
     }
@@ -131,9 +126,10 @@ public class NotificationService implements Subject {
     public void notifyCourseStatusChange(Course course, String oldStatus, String newStatus) {
         Notification notification = new Notification(
             course.getInstitutionId(),
+            "Course Status Change",
             String.format("Status of course %s has changed from %s to %s", 
                 course.getCourseTitle(), oldStatus, newStatus),
-            "COURSE_STATUS",
+            "SYSTEM",
             String.valueOf(course.getCourseId())
         );
         createNotification(notification);
@@ -142,6 +138,7 @@ public class NotificationService implements Subject {
     public void notifyRequestUpdate(int userId, String message, String type, String referenceId) {
         Notification notification = new Notification(
             userId,
+            "Request Update",
             message,
             type,
             referenceId

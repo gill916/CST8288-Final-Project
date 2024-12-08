@@ -12,6 +12,9 @@ public class CourseApplication {
     private ApplicationStatus status;
     private String coverLetter;
     private String additionalDocuments;
+    private Course course;
+    private String institutionName;
+    private AcademicProfessional professional;
 
     // Getters and Setters
     public int getApplicationId() {
@@ -75,6 +78,30 @@ public class CourseApplication {
 
     public void setDecisionDate(Date decisionDate) {
         this.decisionDate = decisionDate;
+    }
+
+    public Course getCourse() {
+        return course;
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
+    }
+
+    public String getInstitutionName() {
+        return institutionName;
+    }
+
+    public void setInstitutionName(String institutionName) {
+        this.institutionName = institutionName;
+    }
+
+    public AcademicProfessional getProfessional() {
+        return professional;
+    }
+
+    public void setProfessional(AcademicProfessional professional) {
+        this.professional = professional;
     }
 
 } 

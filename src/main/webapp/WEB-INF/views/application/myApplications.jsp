@@ -1,6 +1,19 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<%-- Debug Information --%>
+<c:if test="${pageContext.request.getParameter('debug') == 'true'}">
+    <div class="debug-info" style="background: #f8f9fa; padding: 10px; margin: 10px; border: 1px solid #ddd;">
+        <h4>Debug Information</h4>
+        <p>Request URI: ${pageContext.request.requestURI}</p>
+        <p>Context Path: ${pageContext.request.contextPath}</p>
+        <p>Servlet Path: ${pageContext.request.servletPath}</p>
+        <p>User Type: ${sessionScope.user.userType}</p>
+        <p>Applications Count: ${applications.size()}</p>
+    </div>
+</c:if>
+
 <c:set var="title" value="My Applications" scope="request"/>
 <%@ include file="../../common/header.jsp" %>
 

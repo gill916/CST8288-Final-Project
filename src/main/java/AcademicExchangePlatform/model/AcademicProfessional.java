@@ -2,6 +2,9 @@ package AcademicExchangePlatform.model;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class AcademicProfessional extends User {
     private String firstName;
@@ -10,7 +13,7 @@ public class AcademicProfessional extends User {
     private String position;
     private String educationBackground;
     private List<String> expertise;
-    private boolean isProfileComplete;
+    private boolean profileComplete;
 
     public String getFirstName() {
         return firstName;
@@ -61,24 +64,19 @@ public class AcademicProfessional extends User {
     }
 
     public boolean isProfileComplete() {
-        return isProfileComplete && 
-               firstName != null && !firstName.isEmpty() &&
-               lastName != null && !lastName.isEmpty() &&
-               currentInstitution != null && !currentInstitution.isEmpty() &&
-               position != null && !position.isEmpty() &&
-               educationBackground != null && !educationBackground.isEmpty() &&
-               expertise != null && !expertise.isEmpty();
+        return profileComplete;
     }
 
     public void setProfileComplete(boolean profileComplete) {
-        this.isProfileComplete = profileComplete;
+        this.profileComplete = profileComplete;
     }
 
-    public void completeProfile(String position, String currentInstitution, String educationBackground, List<String> expertise) {
+    public void completeProfile(String position, String currentInstitution, 
+                              String educationBackground, List<String> expertise) {
         this.position = position;
         this.currentInstitution = currentInstitution;
         this.educationBackground = educationBackground;
         this.expertise = new ArrayList<>(expertise);
-        this.isProfileComplete = true;
+        this.profileComplete = true;
     }
 }

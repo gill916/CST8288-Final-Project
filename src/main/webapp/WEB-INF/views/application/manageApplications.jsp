@@ -48,10 +48,15 @@
                                               method="post" style="display: inline;">
                                             <input type="hidden" name="applicationId" 
                                                    value="${application.applicationId}">
-                                            <button type="submit" name="status" value="ACCEPTED" 
-                                                    class="btn btn-sm btn-success">Accept</button>
-                                            <button type="submit" name="status" value="REJECTED" 
-                                                    class="btn btn-sm btn-danger">Reject</button>
+                                            <input type="hidden" name="status" value="ACCEPTED">
+                                            <button type="submit" class="btn btn-sm btn-success">Accept</button>
+                                        </form>
+                                        <form action="${pageContext.request.contextPath}/application/updateStatus" 
+                                              method="post" style="display: inline;">
+                                            <input type="hidden" name="applicationId" 
+                                                   value="${application.applicationId}">
+                                            <input type="hidden" name="status" value="REJECTED">
+                                            <button type="submit" class="btn btn-sm btn-danger">Reject</button>
                                         </form>
                                     </c:if>
                                 </div>

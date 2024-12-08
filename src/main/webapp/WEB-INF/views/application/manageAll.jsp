@@ -30,8 +30,15 @@
                                 <small class="text-muted">${application.course.courseCode}</small>
                             </td>
                             <td>
-                                ${application.professional.firstName} 
-                                ${application.professional.lastName}
+                                <c:choose>
+                                    <c:when test="${not empty application.professional}">
+                                        ${application.professional.firstName} 
+                                        ${application.professional.lastName}
+                                    </c:when>
+                                    <c:otherwise>
+                                        <span class="text-muted">N/A</span>
+                                    </c:otherwise>
+                                </c:choose>
                             </td>
                             <td>
                                 <fmt:formatDate value="${application.applicationDate}" 
@@ -53,10 +60,15 @@
                                               method="post" style="display: inline;">
                                             <input type="hidden" name="applicationId" 
                                                    value="${application.applicationId}">
-                                            <button type="submit" name="status" value="ACCEPTED" 
-                                                    class="btn btn-sm btn-success">Accept</button>
-                                            <button type="submit" name="status" value="REJECTED" 
-                                                    class="btn btn-sm btn-danger">Reject</button>
+                                            <input type="hidden" name="status" value="ACCEPTED">
+                                            <button type="submit" class="btn btn-sm btn-success">Accept</button>
+                                        </form>
+                                        <form action="${pageContext.request.contextPath}/application/updateStatus" 
+                                              method="post" style="display: inline;">
+                                            <input type="hidden" name="applicationId" 
+                                                   value="${application.applicationId}">
+                                            <input type="hidden" name="status" value="REJECTED">
+                                            <button type="submit" class="btn btn-sm btn-danger">Reject</button>
                                         </form>
                                     </c:if>
                                 </div>

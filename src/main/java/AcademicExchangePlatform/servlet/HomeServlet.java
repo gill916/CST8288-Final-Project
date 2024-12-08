@@ -11,11 +11,16 @@ import AcademicExchangePlatform.service.UserService;
 import AcademicExchangePlatform.dbenum.UserType;
 import javax.servlet.annotation.WebServlet;
 import AcademicExchangePlatform.service.NotificationService;
+import AcademicExchangePlatform.service.CourseApplicationService;
+import AcademicExchangePlatform.model.AcademicProfessional;
+import AcademicExchangePlatform.model.AcademicInstitution;
+import java.util.Map;
 
 @WebServlet("/home")
 public class HomeServlet extends HttpServlet {
     private final UserService userService = UserService.getInstance();
     private final NotificationService notificationService = NotificationService.getInstance();
+    private final CourseApplicationService applicationService = CourseApplicationService.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
@@ -30,26 +35,34 @@ public class HomeServlet extends HttpServlet {
             return;
         }
         
+        // Refresh user data from database
+        if (user instanceof AcademicProfessional) {
+            AcademicProfessional professional = userService.getProfessionalById(user.getUserId());
+            if (professional != null) {
+                System.out.println("DEBUG: Profile Complete Status from DB: " + professional.isProfileComplete());
+                session.setAttribute("user", professional);
+                user = professional;
+            }
+        }
+        
         System.out.println("DEBUG: User type: " + user.getUserType());
         System.out.println("DEBUG: User class: " + user.getClass().getName());
-        System.out.println("DEBUG: Session ID: " + session.getId());
-        System.out.println("DEBUG: Context Path: " + request.getContextPath());
+        System.out.println("DEBUG: Profile Complete: " + 
+            (user instanceof AcademicProfessional ? ((AcademicProfessional)user).isProfileComplete() : "N/A"));
         
         // Set common attributes
         request.setAttribute("user", user);
-        int userId = (int) request.getSession().getAttribute("userId");
+        int userId = user.getUserId();
         request.setAttribute("unreadNotifications", notificationService.getUnreadCount(userId));
 
         // Set user-specific attributes based on user type
         if (user.getUserType().equals(UserType.PROFESSIONAL)) {
             System.out.println("DEBUG: Setting PROFESSIONAL attributes");
-            request.setAttribute("pendingApplications", 0);
-            request.setAttribute("acceptedApplications", 0);
-        } else if (user.getUserType().equals(UserType.INSTITUTION)) {
-            System.out.println("DEBUG: Setting INSTITUTION attributes");
-            request.setAttribute("activeCourses", 0);
-            request.setAttribute("pendingApplications", 0);
-            request.setAttribute("recentApplications", null);
+            AcademicProfessional professional = (AcademicProfessional) user;
+            
+            // Get application statistics
+            Map<String, Integer> stats = applicationService.getApplicationStatistics(professional.getUserId());
+            request.setAttribute("applicationStats", stats);
         }
         
         System.out.println("DEBUG: Forwarding to dashboard.jsp");

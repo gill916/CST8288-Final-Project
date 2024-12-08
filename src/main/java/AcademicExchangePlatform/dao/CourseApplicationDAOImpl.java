@@ -3,6 +3,8 @@ package AcademicExchangePlatform.dao;
 import AcademicExchangePlatform.model.CourseApplication;
 import AcademicExchangePlatform.model.DatabaseConnection;
 import AcademicExchangePlatform.dbenum.ApplicationStatus;
+import AcademicExchangePlatform.model.Course;
+import AcademicExchangePlatform.model.AcademicProfessional;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -30,42 +32,23 @@ public class CourseApplicationDAOImpl implements CourseApplicationDAO {
     }
 
     @Override
-    public boolean updateApplicationStatus(int applicationId, ApplicationStatus status) {
-        Connection conn = null;
-        try {
-            conn = DatabaseConnection.getInstance().getConnection();
-            conn.setAutoCommit(false);
+    public boolean updateApplicationStatus(int applicationId, ApplicationStatus status, int institutionId) {
+        String query = "UPDATE courseapplications SET status = ?, decisionDate = ? " +
+                      "WHERE applicationId = ? AND EXISTS (" +
+                      "SELECT 1 FROM courses c WHERE c.courseId = courseapplications.courseId " +
+                      "AND c.institutionId = ?)";
+        
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, status.name());
+            stmt.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
+            stmt.setInt(3, applicationId);
+            stmt.setInt(4, institutionId);
             
-            String query = "UPDATE courseapplications SET status = ? WHERE applicationId = ?";
-            try (PreparedStatement stmt = conn.prepareStatement(query)) {
-                stmt.setString(1, status.toString());
-                stmt.setInt(2, applicationId);
-                boolean updated = stmt.executeUpdate() > 0;
-                
-                if (updated) {
-                    conn.commit();
-                    return true;
-                }
-                conn.rollback();
-                return false;
-            }
+            return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            try {
-                if (conn != null) conn.rollback();
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
             e.printStackTrace();
             return false;
-        } finally {
-            try {
-                if (conn != null) {
-                    conn.setAutoCommit(true);
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
     }
 
@@ -107,13 +90,26 @@ public class CourseApplicationDAOImpl implements CourseApplicationDAO {
     @Override
     public List<CourseApplication> getApplicationsByProfessional(int professionalId) {
         List<CourseApplication> applications = new ArrayList<>();
-        String query = "SELECT * FROM courseapplications WHERE professionalId = ?";
+        String query = "SELECT ca.*, c.courseTitle, c.courseCode, c.institutionId, ai.institutionName " +
+                      "FROM courseapplications ca " +
+                      "JOIN courses c ON ca.courseId = c.courseId " +
+                      "JOIN academicinstitutions ai ON c.institutionId = ai.userId " +
+                      "WHERE ca.professionalId = ?";
+        
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, professionalId);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    applications.add(extractApplicationFromResultSet(rs));
+                    CourseApplication application = extractApplicationFromResultSet(rs);
+                    Course course = new Course();
+                    course.setCourseId(rs.getInt("courseId"));
+                    course.setCourseTitle(rs.getString("courseTitle"));
+                    course.setCourseCode(rs.getString("courseCode"));
+                    course.setInstitutionId(rs.getInt("institutionId"));
+                    course.setInstitutionName(rs.getString("institutionName"));
+                    application.setCourse(course);
+                    applications.add(application);
                 }
             }
         } catch (SQLException e) {
@@ -124,22 +120,59 @@ public class CourseApplicationDAOImpl implements CourseApplicationDAO {
 
     @Override
     public boolean withdrawApplication(int applicationId) {
-        return updateApplicationStatus(applicationId, ApplicationStatus.WITHDRAWN);
+        String query = "UPDATE courseapplications SET status = ?, decisionDate = ? WHERE applicationId = ?";
+        
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, ApplicationStatus.WITHDRAWN.name());
+            stmt.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
+            stmt.setInt(3, applicationId);
+            
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
     public List<CourseApplication> getAllInstitutionApplications(int institutionId) {
         List<CourseApplication> applications = new ArrayList<>();
-        String query = "SELECT ca.* FROM courseapplications ca " +
+        String query = "SELECT ca.*, c.courseTitle, c.courseCode, " +
+                      "ap.firstName, ap.lastName, ap.userId as professionalId " +
+                      "FROM courseapplications ca " +
                       "JOIN courses c ON ca.courseId = c.courseId " +
+                      "JOIN academicprofessionals ap ON ca.professionalId = ap.userId " +
                       "WHERE c.institutionId = ?";
                       
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, institutionId);
+            
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    applications.add(extractApplicationFromResultSet(rs));
+                    CourseApplication application = new CourseApplication();
+                    application.setApplicationId(rs.getInt("applicationId"));
+                    application.setCourseId(rs.getInt("courseId"));
+                    application.setProfessionalId(rs.getInt("professionalId"));
+                    application.setStatus(ApplicationStatus.valueOf(rs.getString("status")));
+                    application.setApplicationDate(rs.getTimestamp("applicationDate"));
+                    
+                    // Set course information
+                    Course course = new Course();
+                    course.setCourseId(rs.getInt("courseId"));
+                    course.setCourseTitle(rs.getString("courseTitle"));
+                    course.setCourseCode(rs.getString("courseCode"));
+                    application.setCourse(course);
+                    
+                    // Set professional information
+                    AcademicProfessional professional = new AcademicProfessional();
+                    professional.setUserId(rs.getInt("professionalId"));
+                    professional.setFirstName(rs.getString("firstName"));
+                    professional.setLastName(rs.getString("lastName"));
+                    application.setProfessional(professional);
+                    
+                    applications.add(application);
                 }
             }
         } catch (SQLException e) {

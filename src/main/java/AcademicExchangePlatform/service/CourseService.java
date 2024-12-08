@@ -107,6 +107,11 @@ public class CourseService {
     }
 
     public boolean canApplyToCourse(AcademicProfessional professional, Course course) {
+        System.out.println("Debug - Checking if can apply to course");
+        System.out.println("Debug - Professional complete: " + professional.isProfileComplete());
+        System.out.println("Debug - Course status: " + course.getStatus());
+        System.out.println("Debug - Application deadline: " + course.getApplicationDeadline());
+        
         if (!professional.isProfileComplete()) {
             return false;
         }

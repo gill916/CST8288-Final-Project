@@ -6,6 +6,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.Timestamp;
+import java.util.Arrays;
 
 public class UserDAOImpl implements UserDAO {
     private static UserDAOImpl instance;
@@ -112,7 +113,9 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public User getUserByEmail(String email) {
         System.out.println("Fetching user with email: " + email);
-        String query = "SELECT u.*, u.status, u.createdAt, u.lastLogin, ap.firstName, ap.lastName, ap.currentInstitution, ap.position, " +
+        String query = "SELECT u.*, u.status, u.createdAt, u.lastLogin, " +
+                      "ap.firstName, ap.lastName, ap.currentInstitution, ap.position, " +
+                      "ap.educationBackground, ap.expertise, ap.isProfileComplete, " +
                       "ai.institutionName, ai.address " +
                       "FROM Users u " +
                       "LEFT JOIN AcademicProfessionals ap ON u.userId = ap.userId " +
@@ -139,6 +142,15 @@ public class UserDAOImpl implements UserDAO {
                     professional.setLastName(rs.getString("lastName"));
                     professional.setCurrentInstitution(rs.getString("currentInstitution"));
                     professional.setPosition(rs.getString("position"));
+                    professional.setEducationBackground(rs.getString("educationBackground"));
+                    professional.setProfileComplete(rs.getBoolean("isProfileComplete"));
+                    
+                    // Load expertise
+                    String expertiseStr = rs.getString("expertise");
+                    if (expertiseStr != null && !expertiseStr.isEmpty()) {
+                        professional.setExpertise(Arrays.asList(expertiseStr.split(",")));
+                    }
+                    
                     user = professional;
                 } else {
                     AcademicInstitution institution = new AcademicInstitution();
@@ -152,6 +164,11 @@ public class UserDAOImpl implements UserDAO {
                 user.setPassword(rs.getString("password"));
                 user.setUserType(userType);
                 user.setStatus(rs.getString("status"));
+                
+                System.out.println("DEBUG: Loaded profile complete status: " + 
+                    (user instanceof AcademicProfessional ? 
+                    ((AcademicProfessional)user).isProfileComplete() : "N/A"));
+                    
                 return user;
             }
         } catch (SQLException e) {
@@ -211,7 +228,8 @@ public class UserDAOImpl implements UserDAO {
 
     private void updateProfessionalDetails(Connection connection, AcademicProfessional professional) throws SQLException {
         String query = "UPDATE AcademicProfessionals SET firstName = ?, lastName = ?, " +
-                      "currentInstitution = ?, position = ?, educationBackground = ? " +
+                      "currentInstitution = ?, position = ?, educationBackground = ?, " +
+                      "expertise = ?, isProfileComplete = ? " +
                       "WHERE userId = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, professional.getFirstName());
@@ -219,7 +237,9 @@ public class UserDAOImpl implements UserDAO {
             stmt.setString(3, professional.getCurrentInstitution());
             stmt.setString(4, professional.getPosition());
             stmt.setString(5, professional.getEducationBackground());
-            stmt.setInt(6, professional.getUserId());
+            stmt.setString(6, professional.getExpertise() != null ? String.join(",", professional.getExpertise()) : "");
+            stmt.setBoolean(7, professional.isProfileComplete());
+            stmt.setInt(8, professional.getUserId());
             stmt.executeUpdate();
         }
     }
@@ -264,13 +284,17 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public User getUserById(int userId) {
-        String query = "SELECT * FROM Users WHERE userId = ?";
+        String sql = "SELECT u.*, ap.* FROM users u " +
+                     "LEFT JOIN academicprofessionals ap ON u.userId = ap.userId " +
+                     "WHERE u.userId = ?";
+        
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, userId);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return extractUserFromResultSet(rs);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return loadUserFromResultSet(rs);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -278,28 +302,34 @@ public class UserDAOImpl implements UserDAO {
         return null;
     }
 
-    private User extractUserFromResultSet(ResultSet rs) throws SQLException {
-        UserType userType = UserType.fromValue(rs.getString("userType"));
-        User user;
-
-        if (userType == UserType.PROFESSIONAL) {
+    private User loadUserFromResultSet(ResultSet rs) throws SQLException {
+        String userType = rs.getString("userType");
+        
+        if (userType.equals("PROFESSIONAL")) {
             AcademicProfessional professional = new AcademicProfessional();
+            // Load base user fields
+            professional.setUserId(rs.getInt("userId"));
+            professional.setEmail(rs.getString("email"));
+            professional.setUserType(UserType.valueOf(rs.getString("userType")));
+            professional.setStatus(rs.getString("status"));
+            
+            // Load professional specific fields
             professional.setFirstName(rs.getString("firstName"));
             professional.setLastName(rs.getString("lastName"));
             professional.setCurrentInstitution(rs.getString("currentInstitution"));
             professional.setPosition(rs.getString("position"));
-            user = professional;
-        } else {
-            AcademicInstitution institution = new AcademicInstitution();
-            institution.setInstitutionName(rs.getString("institutionName"));
-            institution.setAddress(rs.getString("address"));
-            user = institution;
+            professional.setEducationBackground(rs.getString("educationBackground"));
+            professional.setProfileComplete(rs.getBoolean("isProfileComplete"));
+            
+            // Load expertise
+            String expertiseStr = rs.getString("expertise");
+            if (expertiseStr != null && !expertiseStr.isEmpty()) {
+                professional.setExpertise(Arrays.asList(expertiseStr.split(",")));
+            }
+            
+            return professional;
         }
-
-        user.setUserId(rs.getInt("userId"));
-        user.setEmail(rs.getString("email"));
-        user.setPassword(rs.getString("password"));
-        user.setUserType(userType);
-        return user;
+      
+        return null;
     }
 }

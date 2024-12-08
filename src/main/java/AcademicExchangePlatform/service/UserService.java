@@ -3,10 +3,14 @@ package AcademicExchangePlatform.service;
 import AcademicExchangePlatform.dao.UserDAO;
 import AcademicExchangePlatform.dao.UserDAOImpl;
 import AcademicExchangePlatform.model.User;
+import AcademicExchangePlatform.model.DatabaseConnection;
 import AcademicExchangePlatform.model.AcademicInstitution;
 import AcademicExchangePlatform.model.AcademicProfessional;
 import java.util.Date;
 import java.util.List;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class UserService {
     private static UserService instance;
@@ -51,7 +55,34 @@ public class UserService {
     }
 
     public boolean updateProfile(User user) {
-        return userDAO.updateUser(user);
+        if (user instanceof AcademicProfessional) {
+            AcademicProfessional professional = (AcademicProfessional) user;
+            String sql = "UPDATE academicprofessionals SET " +
+                        "position = ?, " +
+                        "currentInstitution = ?, " +
+                        "educationBackground = ?, " +
+                        "expertise = ?, " +
+                        "isProfileComplete = ? " +
+                        "WHERE userId = ?";
+            
+            try (Connection conn = DatabaseConnection.getInstance().getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(sql)) {
+                
+                stmt.setString(1, professional.getPosition());
+                stmt.setString(2, professional.getCurrentInstitution());
+                stmt.setString(3, professional.getEducationBackground());
+                stmt.setString(4, professional.getExpertise() != null ? 
+                                String.join(",", professional.getExpertise()) : "");
+                stmt.setBoolean(5, professional.isProfileComplete());
+                stmt.setInt(6, professional.getUserId());
+                
+                return stmt.executeUpdate() > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        return false;
     }
 
     public List<AcademicInstitution> getAllInstitutions() {
@@ -88,5 +119,40 @@ public class UserService {
             return (AcademicProfessional) user;
         }
         return null;
+    }
+
+    public boolean updateUser(User user) {
+        if (user instanceof AcademicProfessional) {
+            AcademicProfessional professional = (AcademicProfessional) user;
+            String sql = "UPDATE academicprofessionals SET " +
+                        "isProfileComplete = ?, " +
+                        "position = ?, " +
+                        "currentInstitution = ?, " +
+                        "educationBackground = ?, " +
+                        "expertise = ?, " +
+                        "firstName = ?, " +
+                        "lastName = ? " +
+                        "WHERE userId = ?";
+            
+            try (Connection conn = DatabaseConnection.getInstance().getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(sql)) {
+                
+                stmt.setBoolean(1, professional.isProfileComplete());
+                stmt.setString(2, professional.getPosition());
+                stmt.setString(3, professional.getCurrentInstitution());
+                stmt.setString(4, professional.getEducationBackground());
+                stmt.setString(5, professional.getExpertise() != null ? 
+                                String.join(",", professional.getExpertise()) : "");
+                stmt.setString(6, professional.getFirstName());
+                stmt.setString(7, professional.getLastName());
+                stmt.setInt(8, professional.getUserId());
+                
+                return stmt.executeUpdate() > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        return false;
     }
 }

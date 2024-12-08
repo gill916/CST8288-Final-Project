@@ -20,6 +20,7 @@ public class Course {
     private int institutionId;
     private CourseStatus status;
     private Date applicationDeadline;
+    private String institutionName;
 
     // Getters and Setters
     public int getCourseId() {
@@ -116,5 +117,13 @@ public class Course {
 
     public void setApplicationDeadline(Date applicationDeadline) {
         this.applicationDeadline = applicationDeadline;
+    }
+
+    public String getInstitutionName() {
+        return institutionName;
+    }
+
+    public void setInstitutionName(String institutionName) {
+        this.institutionName = institutionName;
     }
 }

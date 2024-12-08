@@ -31,14 +31,31 @@ public class NotificationDAOImpl implements NotificationDAO {
              PreparedStatement stmt = conn.prepareStatement(query)) {
             
             stmt.setInt(1, notification.getUserId());
-            stmt.setString(2, notification.getType());
+            stmt.setString(2, notification.getTitle());
             stmt.setString(3, notification.getMessage());
-            stmt.setString(4, notification.getType());
+            
+            // Map notification type to valid ENUM value
+            String mappedType = mapNotificationType(notification.getType());
+            stmt.setString(4, mappedType);
             
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            System.out.println("Debug - Notification creation error: " + e.getMessage());
             e.printStackTrace();
             return false;
+        }
+    }
+
+    private String mapNotificationType(String originalType) {
+        switch (originalType.toUpperCase()) {
+            case "NEW_APPLICATION":
+                return "SYSTEM";
+            case "APPLICATION_STATUS":
+                return "APPLICATION_STATUS";
+            case "DEADLINE_REMINDER":
+                return "DEADLINE_REMINDER";
+            default:
+                return "SYSTEM";
         }
     }
 

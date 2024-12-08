@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface CourseApplicationDAO {
     boolean createApplication(CourseApplication application);
-    boolean updateApplicationStatus(int applicationId, ApplicationStatus status);
+    boolean updateApplicationStatus(int applicationId, ApplicationStatus status, int institutionId);
     CourseApplication getApplicationById(int applicationId);
     List<CourseApplication> getApplicationsByCourse(int courseId);
     List<CourseApplication> getApplicationsByProfessional(int professionalId);
