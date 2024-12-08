@@ -124,7 +124,7 @@ public class CourseApplicationDAOImpl implements CourseApplicationDAO {
         
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, ApplicationStatus.WITHDRAWN.name());
+            stmt.setString(1, ApplicationStatus.REJECTED.name());
             stmt.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
             stmt.setInt(3, applicationId);
             
