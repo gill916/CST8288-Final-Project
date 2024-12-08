@@ -25,9 +25,9 @@
                     </div>
                 </div>
                 <div class="course-actions">
-                    <a href="${pageContext.request.contextPath}/course/edit/${course.courseId}" 
+                    <a href="${pageContext.request.contextPath}/course/edit?id=${course.courseId}" 
                        class="btn btn-secondary">Edit</a>
-                    <a href="${pageContext.request.contextPath}/application/course/${course.courseId}" 
+                    <a href="${pageContext.request.contextPath}/application/manage?courseId=${course.courseId}" 
                        class="btn btn-info">View Applications</a>
                     <button onclick="updateCourseStatus(${course.courseId}, 
                             '${course.status == 'ACTIVE' ? 'INACTIVE' : 'ACTIVE'}')" 

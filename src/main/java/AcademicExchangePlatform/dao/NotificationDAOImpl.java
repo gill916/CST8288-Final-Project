@@ -24,16 +24,16 @@ public class NotificationDAOImpl implements NotificationDAO {
 
     @Override
     public boolean createNotification(Notification notification) {
-        String query = "INSERT INTO notifications (userId, message, dateSent, isRead, type, relatedEntityId) " +
-                      "VALUES (?, ?, NOW(), false, ?, ?)";
+        String query = "INSERT INTO notifications (userId, title, message, type, isRead, createdAt) " +
+                      "VALUES (?, ?, ?, ?, false, NOW())";
         
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             
             stmt.setInt(1, notification.getUserId());
-            stmt.setString(2, notification.getMessage());
-            stmt.setString(3, notification.getType());
-            stmt.setString(4, notification.getRelatedEntityId());
+            stmt.setString(2, notification.getType());
+            stmt.setString(3, notification.getMessage());
+            stmt.setString(4, notification.getType());
             
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -45,7 +45,7 @@ public class NotificationDAOImpl implements NotificationDAO {
     @Override
     public List<Notification> getNotificationsByUserId(int userId) {
         List<Notification> notifications = new ArrayList<>();
-        String query = "SELECT * FROM notifications WHERE userId = ? ORDER BY dateSent DESC";
+        String query = "SELECT * FROM notifications WHERE userId = ? ORDER BY createdAt DESC";
         
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -154,10 +154,9 @@ public class NotificationDAOImpl implements NotificationDAO {
         notification.setNotificationId(rs.getInt("notificationId"));
         notification.setUserId(rs.getInt("userId"));
         notification.setMessage(rs.getString("message"));
-        notification.setDateSent(rs.getTimestamp("dateSent"));
+        notification.setDateSent(rs.getTimestamp("createdAt"));
         notification.setRead(rs.getBoolean("isRead"));
         notification.setType(rs.getString("type"));
-        notification.setRelatedEntityId(rs.getString("relatedEntityId"));
         return notification;
     }
 }

@@ -4,17 +4,31 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>${title}</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
+    <!-- Custom CSS -->
+    <link href="${pageContext.request.contextPath}/css/styles.css" rel="stylesheet">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
     <%
+    String path = request.getRequestURI().substring(request.getContextPath().length());
+    boolean isPublicPage = path.endsWith("/login.jsp") || 
+                          path.endsWith("/registration.jsp") || 
+                          path.endsWith("/index.jsp");
+    boolean isNotificationRequest = path.contains("/notification");
+    boolean isApplicationPath = path.equals("/application/manage") || path.equals("/application/my-applications");
+
     if (session.getAttribute("user") == null && 
-        !request.getRequestURI().endsWith("/login.jsp") && 
-        !request.getRequestURI().endsWith("/registration.jsp") && 
-        !request.getRequestURI().endsWith("/index.jsp") &&
-        !request.getRequestURI().contains("/notification")) {
+        !isPublicPage && 
+        !isNotificationRequest && 
+        !isApplicationPath) {
         response.sendRedirect(request.getContextPath() + "/auth/login");
         return;
     }

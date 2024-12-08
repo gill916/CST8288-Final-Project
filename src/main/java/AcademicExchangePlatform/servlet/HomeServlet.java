@@ -10,10 +10,12 @@ import AcademicExchangePlatform.model.User;
 import AcademicExchangePlatform.service.UserService;
 import AcademicExchangePlatform.dbenum.UserType;
 import javax.servlet.annotation.WebServlet;
+import AcademicExchangePlatform.service.NotificationService;
 
 @WebServlet("/home")
 public class HomeServlet extends HttpServlet {
     private final UserService userService = UserService.getInstance();
+    private final NotificationService notificationService = NotificationService.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
@@ -35,7 +37,8 @@ public class HomeServlet extends HttpServlet {
         
         // Set common attributes
         request.setAttribute("user", user);
-        request.setAttribute("unreadNotifications", 0);
+        int userId = (int) request.getSession().getAttribute("userId");
+        request.setAttribute("unreadNotifications", notificationService.getUnreadCount(userId));
 
         // Set user-specific attributes based on user type
         if (user.getUserType().equals(UserType.PROFESSIONAL)) {

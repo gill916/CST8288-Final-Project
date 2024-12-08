@@ -5,22 +5,20 @@ import java.util.Date;
 public class Notification {
     private int notificationId;
     private int userId;
+    private String title;
     private String message;
-    private Date dateSent;
-    private boolean isRead;
     private String type;
-    private String relatedEntityId; // Could be courseId, applicationId, etc.
+    private boolean isRead;
+    private Date dateSent;
 
     // Constructors
     public Notification() {}
 
-    public Notification(int userId, String message, String type, String relatedEntityId) {
+    public Notification(int userId, String message, String type, String referenceId) {
         this.userId = userId;
         this.message = message;
         this.type = type;
-        this.relatedEntityId = relatedEntityId;
-        this.dateSent = new Date();
-        this.isRead = false;
+        this.title = type; // Using type as title temporarily
     }
 
     // Getters and Setters
@@ -72,11 +70,11 @@ public class Notification {
         this.type = type;
     }
 
-    public String getRelatedEntityId() {
-        return relatedEntityId;
+    public String getTitle() {
+        return title;
     }
 
-    public void setRelatedEntityId(String relatedEntityId) {
-        this.relatedEntityId = relatedEntityId;
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

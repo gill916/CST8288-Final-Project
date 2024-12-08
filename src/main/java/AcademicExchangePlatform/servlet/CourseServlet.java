@@ -28,30 +28,36 @@ public class CourseServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        String pathInfo = request.getRequestURI().substring(request.getContextPath().length());
-        User user = (User) request.getSession().getAttribute("user");
+        String pathInfo = request.getServletPath();
         
-        System.out.println("DEBUG: Full URI: " + request.getRequestURI());
-        System.out.println("DEBUG: Context Path: " + request.getContextPath());
-        System.out.println("DEBUG: Path Info: " + pathInfo);
-        System.out.println("DEBUG: Schedules: " + Arrays.toString(Schedule.values()));
-        System.out.println("DEBUG: Delivery Methods: " + Arrays.toString(DeliveryMethod.values()));
-        
-        if (user == null || !user.getUserType().equals(UserType.INSTITUTION)) {
-            response.sendRedirect(request.getContextPath() + "/auth/login");
-            return;
-        }
-
-        if (pathInfo.equals("/course/create")) {
+        if (pathInfo.equals("/course/edit")) {
+            int courseId = Integer.parseInt(request.getParameter("id"));
+            Course course = courseService.getCourseById(courseId);
+            
+            if (course != null) {
+                request.setAttribute("course", course);
+                request.getRequestDispatcher("/WEB-INF/views/course/form.jsp")
+                       .forward(request, response);
+            } else {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            }
+        } else if (pathInfo.equals("/course/create")) {
             Course newCourse = new Course();
             System.out.println("DEBUG: New Course Object: " + newCourse);
             request.setAttribute("course", newCourse);
-            request.setAttribute("schedules", Schedule.values());
-            request.setAttribute("deliveryMethods", DeliveryMethod.values());
+            
+            // Convert enums to List for better JSP handling
+            List<Schedule> scheduleList = Arrays.asList(Schedule.values());
+            List<DeliveryMethod> deliveryMethodList = Arrays.asList(DeliveryMethod.values());
+            
+            request.setAttribute("schedules", scheduleList);
+            request.setAttribute("deliveryMethods", deliveryMethodList);
+            
             System.out.println("DEBUG: Request Attributes Set");
             System.out.println("DEBUG: Course: " + request.getAttribute("course"));
-            System.out.println("DEBUG: Schedules: " + request.getAttribute("schedules"));
-            System.out.println("DEBUG: DeliveryMethods: " + request.getAttribute("deliveryMethods"));
+            System.out.println("DEBUG: Schedules: " + scheduleList);
+            System.out.println("DEBUG: DeliveryMethods: " + deliveryMethodList);
+            
             request.getRequestDispatcher("/WEB-INF/views/course/form.jsp").forward(request, response);
         } else if (pathInfo.equals("/course/manage")) {
             handleManageCourses(request, response);

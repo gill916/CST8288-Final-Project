@@ -1,7 +1,5 @@
 package AcademicExchangePlatform.model;
 
-import AcademicExchangePlatform.model.NotificationObserver;
-
 public abstract class NotificationDecorator implements Subject {
     protected Subject wrappedSubject;
 

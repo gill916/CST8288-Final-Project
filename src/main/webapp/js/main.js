@@ -277,4 +277,29 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-}); 
+});
+
+function updateCourseStatus(courseId, newStatus) {
+    if (confirm('Are you sure you want to ' + 
+        (newStatus === 'ACTIVE' ? 'activate' : 'deactivate') + 
+        ' this course?')) {
+        fetch(`${pageContext.request.contextPath}/course/updateStatus`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `courseId=${courseId}&status=${newStatus}`
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                alert('Failed to update course status');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while updating the course status');
+        });
+    }
+} 
