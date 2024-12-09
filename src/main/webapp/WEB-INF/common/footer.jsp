@@ -1,3 +1,7 @@
+<%--
+    Author: Jiajun Cai
+    Student Number: 041127296
+--%>
     <footer class="footer mt-auto py-3 bg-light">
         <div class="container text-center">
             <span class="text-muted">© 2024 Academic Exchange Platform</span>

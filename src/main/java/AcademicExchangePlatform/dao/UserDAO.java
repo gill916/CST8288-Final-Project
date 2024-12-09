@@ -1,3 +1,7 @@
+/**
+ * Author: Jiajun Cai
+ * Student Number: 041127296
+ */
 package AcademicExchangePlatform.dao;
 
 import AcademicExchangePlatform.model.User;
@@ -11,7 +15,7 @@ import java.util.List;
 public interface UserDAO {
         /**
      * Creates a new course in the database.
-     * @param course The Course object to create
+     * @param user The Course object to create
      * @return true if creation was successful, false otherwise
      */
     boolean addUser(User user);

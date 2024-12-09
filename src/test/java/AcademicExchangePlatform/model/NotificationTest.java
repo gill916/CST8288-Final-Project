@@ -1,3 +1,8 @@
+/**
+ * Author: Jiajun Cai
+ *
+ * Student Number: 041127296
+ */
 package AcademicExchangePlatform.model;
 
 import org.junit.Test;

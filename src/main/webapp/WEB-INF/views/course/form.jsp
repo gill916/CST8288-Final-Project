@@ -1,3 +1,7 @@
+<%--
+    Author: Jiajun Cai
+    Student Number: 041127296
+--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="title" value="${empty course ? 'Create Course' : 'Edit Course'}" scope="request"/>

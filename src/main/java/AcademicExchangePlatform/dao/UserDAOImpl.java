@@ -1,5 +1,10 @@
+/**
+ * Author: Jiajun Cai
+ * Student Number: 041127296
+ */
 package AcademicExchangePlatform.dao;
 
+import AcademicExchangePlatform.dao.UserDAO;
 import AcademicExchangePlatform.dbenum.UserType;
 import AcademicExchangePlatform.model.*;
 import java.sql.*;

@@ -1,3 +1,7 @@
+/**
+ * Author: Jiajun Cai
+ * Student Number: 041127296
+ */
 package AcademicExchangePlatform.model;
 /**
  * Interface defining the contract for notification subjects.
