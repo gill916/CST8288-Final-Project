@@ -16,6 +16,11 @@ import java.util.List;
  */
 public class CourseApplicationDAOImpl implements CourseApplicationDAO {
 
+    /**
+     * Creates a new course application.
+     * @param application The CourseApplication object to create
+     * @return true if creation was successful, false otherwise
+     */
     @Override
     public boolean createApplication(CourseApplication application) {
         String query = "INSERT INTO courseapplications (courseId, professionalId, coverLetter, " +
@@ -35,6 +40,13 @@ public class CourseApplicationDAOImpl implements CourseApplicationDAO {
         }
     }
 
+    /**
+     * Updates the status of a course application.
+     * @param applicationId The ID of the course application
+     * @param status The new status of the application
+     * @param institutionId The ID of the institution
+     * @return true if update was successful, false otherwise
+     */
     @Override
     public boolean updateApplicationStatus(int applicationId, ApplicationStatus status, int institutionId) {
         String query = "UPDATE courseapplications SET status = ?, decisionDate = ? " +
@@ -56,6 +68,11 @@ public class CourseApplicationDAOImpl implements CourseApplicationDAO {
         }
     }
 
+    /**
+     * Retrieves a course application by its ID.
+     * @param applicationId The ID of the course application
+     * @return The CourseApplication object, or null if not found
+     */
     @Override
     public CourseApplication getApplicationById(int applicationId) {
         String query = "SELECT * FROM courseapplications WHERE applicationId = ?";
@@ -73,6 +90,11 @@ public class CourseApplicationDAOImpl implements CourseApplicationDAO {
         return null;
     }
 
+    /**
+     * Retrieves all applications for a specific course.
+     * @param courseId The ID of the course
+     * @return List of CourseApplication objects
+     */
     @Override
     public List<CourseApplication> getApplicationsByCourse(int courseId) {
         List<CourseApplication> applications = new ArrayList<>();
@@ -91,6 +113,11 @@ public class CourseApplicationDAOImpl implements CourseApplicationDAO {
         return applications;
     }
 
+    /**
+     * Retrieves all applications for a specific professional.
+     * @param professionalId The ID of the academic professional
+     * @return List of CourseApplication objects
+     */
     @Override
     public List<CourseApplication> getApplicationsByProfessional(int professionalId) {
         List<CourseApplication> applications = new ArrayList<>();
@@ -122,6 +149,11 @@ public class CourseApplicationDAOImpl implements CourseApplicationDAO {
         return applications;
     }
 
+    /**
+     * Withdraws a course application.
+     * @param applicationId The ID of the course application
+     * @return true if withdrawal was successful, false otherwise
+     */
     @Override
     public boolean withdrawApplication(int applicationId) {
         String query = "UPDATE courseapplications SET status = ?, decisionDate = ? WHERE applicationId = ?";
@@ -139,6 +171,11 @@ public class CourseApplicationDAOImpl implements CourseApplicationDAO {
         }
     }
 
+    /**
+     * Retrieves all applications for courses at a specific institution.
+     * @param institutionId The ID of the academic institution
+     * @return List of CourseApplication objects
+     */
     @Override
     public List<CourseApplication> getAllInstitutionApplications(int institutionId) {
         List<CourseApplication> applications = new ArrayList<>();
@@ -185,6 +222,12 @@ public class CourseApplicationDAOImpl implements CourseApplicationDAO {
         return applications;
     }
 
+    /**
+     * Checks if a professional has an existing application for a course.
+     * @param professionalId The ID of the academic professional
+     * @param courseId The ID of the course
+     * @return true if an application exists, false otherwise
+     */
     @Override
     public boolean hasExistingApplication(int professionalId, int courseId) {
         String query = "SELECT COUNT(*) FROM courseapplications " +
@@ -206,6 +249,11 @@ public class CourseApplicationDAOImpl implements CourseApplicationDAO {
         return false;
     }
 
+    /**
+     * Retrieves the total number of applications for a specific course.
+     * @param courseId The ID of the course
+     * @return The number of applications
+     */
     @Override
     public int getApplicationCount(int courseId) {
         String query = "SELECT COUNT(*) FROM courseapplications WHERE courseId = ?";
@@ -224,6 +272,12 @@ public class CourseApplicationDAOImpl implements CourseApplicationDAO {
         return 0;
     }
 
+    /**
+     * Extracts a CourseApplication object from a ResultSet.
+     * @param rs The ResultSet containing the application data
+     * @return The CourseApplication object
+     * @throws SQLException If there is an error accessing the ResultSet
+     */
     private CourseApplication extractApplicationFromResultSet(ResultSet rs) throws SQLException {
         CourseApplication application = new CourseApplication();
         application.setApplicationId(rs.getInt("applicationId"));
@@ -237,6 +291,11 @@ public class CourseApplicationDAOImpl implements CourseApplicationDAO {
         return application;
     }
 
+    /**
+     * Updates an existing course application.
+     * @param application The CourseApplication object containing updated details
+     * @return true if update was successful, false otherwise
+     */
     @Override
     public boolean updateApplication(CourseApplication application) {
         String sql = "UPDATE courseapplications SET status = ?, decisionDate = ? WHERE applicationId = ?";

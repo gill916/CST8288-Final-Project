@@ -20,11 +20,21 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Servlet for managing courses.
+ */
 @WebServlet({"/course/create", "/course/edit/*", "/course/manage"})
 public class CourseServlet extends HttpServlet {
     private final CourseService courseService = CourseService.getInstance();
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
+    /**
+     * Handles GET requests for course management.
+     * @param request The HTTP request
+     * @param response The HTTP response
+     * @throws ServletException If there is an error processing the request
+     * @throws IOException If there is an error writing to the response
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
@@ -66,6 +76,13 @@ public class CourseServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Handles the management of courses for institutions.
+     * @param request The HTTP request
+     * @param response The HTTP response
+     * @throws ServletException If there is an error processing the request
+     * @throws IOException If there is an error writing to the response
+     */
     private void handleManageCourses(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         User user = (User) request.getSession().getAttribute("user");
@@ -106,6 +123,13 @@ public class CourseServlet extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/views/course/manage.jsp").forward(request, response);
     }
 
+    /**
+     * Handles the view of a course.
+     * @param request The HTTP request
+     * @param response The HTTP response
+     * @throws ServletException If there is an error processing the request
+     * @throws IOException If there is an error writing to the response
+     */
     private void handleViewCourse(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         try {
@@ -122,6 +146,13 @@ public class CourseServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Handles POST requests for course creation.
+     * @param request The HTTP request
+     * @param response The HTTP response
+     * @throws ServletException If there is an error processing the request
+     * @throws IOException If there is an error writing to the response
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
@@ -145,6 +176,12 @@ public class CourseServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Creates a course object from the request parameters.
+     * @param request The HTTP request
+     * @return The created course object
+     * @throws ParseException If there is an error parsing the date
+     */
     private Course createCourseFromRequest(HttpServletRequest request) throws ParseException {
         Course course = new Course();
         course.setCourseTitle(request.getParameter("courseTitle"));

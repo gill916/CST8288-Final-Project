@@ -10,11 +10,23 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-
+/**
+ * Servlet for handling notifications.
+ * Manages the display and management of notifications for users.
+ */
 @WebServlet(urlPatterns = {"/notification", "/notification/*"})
 public class NotificationServlet extends HttpServlet {
     private final NotificationService notificationService = NotificationService.getInstance();
 
+    /**
+     * Handles GET requests for notification management.
+     * Validates user session and displays notifications.
+     *
+     * @param request The HTTP request
+     * @param response The HTTP response
+     * @throws ServletException If the request cannot be handled
+     * @throws IOException If an input or output error occurs
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
@@ -53,6 +65,15 @@ public class NotificationServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Handles POST requests for notification management.
+     * Validates user session and processes notification actions.
+     *
+     * @param request The HTTP request
+     * @param response The HTTP response
+     * @throws ServletException If the request cannot be handled
+     * @throws IOException If an input or output error occurs
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {

@@ -17,6 +17,10 @@ public class UserDAOImpl implements UserDAO {
     
     private UserDAOImpl() {} // Private constructor
     
+    /**
+     * Retrieves the singleton instance of UserDAOImpl.
+     * @return The singleton instance of UserDAOImpl
+     */
     public static UserDAOImpl getInstance() {
         if (instance == null) {
             instance = new UserDAOImpl();
@@ -24,6 +28,11 @@ public class UserDAOImpl implements UserDAO {
         return instance;
     }
 
+    /**
+     * Adds a new user to the database.
+     * @param user The User object to add
+     * @return true if addition was successful, false otherwise
+     */
     @Override
     public boolean addUser(User user) {
         Connection connection = null;
@@ -88,6 +97,12 @@ public class UserDAOImpl implements UserDAO {
         }
     }
 
+    /**
+     * Adds professional details to the database.
+     * @param connection The database connection
+     * @param professional The AcademicProfessional object containing details to add
+     * @throws SQLException If there is an error accessing the database
+     */
     private void addProfessionalDetails(Connection connection, AcademicProfessional professional) throws SQLException {
         String query = "INSERT INTO AcademicProfessionals (userId, firstName, lastName, " +
                       "currentInstitution, position, educationBackground) " +
@@ -103,6 +118,12 @@ public class UserDAOImpl implements UserDAO {
         }
     }
 
+    /**
+     * Adds institution details to the database.
+     * @param connection The database connection
+     * @param institution The AcademicInstitution object containing details to add
+     * @throws SQLException If there is an error accessing the database
+     */
     private void addInstitutionDetails(Connection connection, AcademicInstitution institution) throws SQLException {
         String query = "INSERT INTO AcademicInstitutions (userId, institutionName, address, contactEmail) VALUES (?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -114,6 +135,11 @@ public class UserDAOImpl implements UserDAO {
         }
     }
 
+    /**
+     * Retrieves a user by their email address.
+     * @param email The email address of the user to retrieve
+     * @return The User object if found, null otherwise
+     */
     @Override
     public User getUserByEmail(String email) {
         System.out.println("Fetching user with email: " + email);
@@ -181,6 +207,11 @@ public class UserDAOImpl implements UserDAO {
         return null;
     }
 
+    /**
+     * Updates an existing user in the database.
+     * @param user The User object containing updated details
+     * @return true if update was successful, false otherwise
+     */
     @Override
     public boolean updateUser(User user) {
         Connection connection = null;
@@ -230,6 +261,12 @@ public class UserDAOImpl implements UserDAO {
         }
     }
 
+    /**
+     * Updates professional details in the database.
+     * @param connection The database connection
+     * @param professional The AcademicProfessional object containing updated details
+     * @throws SQLException If there is an error accessing the database
+     */
     private void updateProfessionalDetails(Connection connection, AcademicProfessional professional) throws SQLException {
         String query = "UPDATE AcademicProfessionals SET firstName = ?, lastName = ?, " +
                       "currentInstitution = ?, position = ?, educationBackground = ?, " +
@@ -248,6 +285,12 @@ public class UserDAOImpl implements UserDAO {
         }
     }
 
+    /**
+     * Updates institution details in the database.
+     * @param connection The database connection
+     * @param institution The AcademicInstitution object containing updated details
+     * @throws SQLException If there is an error accessing the database
+     */
     private void updateInstitutionDetails(Connection connection, AcademicInstitution institution) throws SQLException {
         String query = "UPDATE AcademicInstitutions SET institutionName = ?, address = ? WHERE userId = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -258,6 +301,10 @@ public class UserDAOImpl implements UserDAO {
         }
     }
 
+    /**
+     * Retrieves all institutions from the database.
+     * @return List of AcademicInstitution objects
+     */
     @Override
     public List<AcademicInstitution> getAllInstitutions() {
         List<AcademicInstitution> institutions = new ArrayList<>();
@@ -286,6 +333,11 @@ public class UserDAOImpl implements UserDAO {
         return institutions;
     }
 
+    /**
+     * Retrieves a user by their ID.
+     * @param userId The ID of the user to retrieve
+     * @return The User object if found, null otherwise
+     */
     @Override
     public User getUserById(int userId) {
         String sql = "SELECT u.*, ap.* FROM users u " +
@@ -306,6 +358,12 @@ public class UserDAOImpl implements UserDAO {
         return null;
     }
 
+    /**
+     * Loads a User object from a ResultSet.
+     * @param rs The ResultSet containing the user data
+     * @return The User object
+     * @throws SQLException If there is an error accessing the ResultSet
+     */
     private User loadUserFromResultSet(ResultSet rs) throws SQLException {
         String userType = rs.getString("userType");
         
@@ -337,6 +395,10 @@ public class UserDAOImpl implements UserDAO {
         return null;
     }
 
+    /**
+     * Retrieves all professionals from the database.
+     * @return List of AcademicProfessional objects
+     */
     @Override
     public List<AcademicProfessional> getAllProfessionals() {
         List<AcademicProfessional> professionals = new ArrayList<>();

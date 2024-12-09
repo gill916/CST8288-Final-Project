@@ -14,11 +14,29 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
 
-
+/**
+ * Servlet for handling user profile operations.
+ * Manages profile viewing, updating, and completion status for both
+ * Academic Professionals and Academic Institutions.
+ * URL patterns:
+ * - /profile : View current user's profile
+ * - /profile/edit : Edit profile information
+ * - /profile/update : Process profile updates
+ */
 @WebServlet(urlPatterns = {"/profile", "/profile/*"})
 public class ProfileServlet extends HttpServlet {
     private final UserService userService = UserService.getInstance();
 
+    /**
+     * Handles GET requests for profile viewing.
+     * Validates user session and displays profile information.
+     * Redirects to login page if no user session is found.
+     *
+     * @param request The HTTP request
+     * @param response The HTTP response
+     * @throws ServletException If the request cannot be handled
+     * @throws IOException If an input or output error occurs
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
@@ -33,6 +51,16 @@ public class ProfileServlet extends HttpServlet {
         request.getRequestDispatcher(jspPath).forward(request, response);
     }
 
+    /**
+     * Handles POST requests for profile updates.
+     * Validates user session and processes profile updates.
+     * Redirects to login page if no user session is found.
+     *
+     * @param request The HTTP request
+     * @param response The HTTP response
+     * @throws ServletException If the request cannot be handled
+     * @throws IOException If an input or output error occurs
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
@@ -60,6 +88,11 @@ public class ProfileServlet extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/profile");
     }
 
+    /**
+     * Determines the JSP path based on the user type.
+     * @param user The user object
+     * @return The JSP path
+     */
     private String determineJspPath(User user) {
         if (user instanceof AcademicProfessional) {
             return "/WEB-INF/views/profile/professional-profile.jsp";
@@ -69,6 +102,11 @@ public class ProfileServlet extends HttpServlet {
         return "/WEB-INF/views/error.jsp";
     }
 
+    /**
+     * Updates the user profile based on the user type.
+     * @param request The HTTP request
+     * @param user The user object
+     */
     private void updateUserProfile(HttpServletRequest request, User user) {
         if (user instanceof AcademicProfessional) {
             updateProfessionalProfile(request, (AcademicProfessional) user);
@@ -77,6 +115,11 @@ public class ProfileServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Updates the professional profile based on the request parameters.
+     * @param request The HTTP request
+     * @param professional The professional user object
+     */
     private void updateProfessionalProfile(HttpServletRequest request, AcademicProfessional professional) {
         try {
             String position = request.getParameter("position");
@@ -105,6 +148,11 @@ public class ProfileServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Updates the institution profile based on the request parameters.
+     * @param request The HTTP request
+     * @param institution The institution user object
+     */
     private void updateInstitutionProfile(HttpServletRequest request, AcademicInstitution institution) {
         String address = request.getParameter("address");
         String contactEmail = request.getParameter("contactEmail");

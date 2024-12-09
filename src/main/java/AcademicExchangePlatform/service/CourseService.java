@@ -16,6 +16,11 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Set;
 
+/**
+ * Service class for managing course operations.
+ * Handles business logic for course creation, updates, and search functionality.
+ * Implements the Singleton pattern and manages course-related notifications.
+ */
 public class CourseService {
     private static CourseService instance;
     private final CourseDAO courseDAO;
@@ -27,6 +32,10 @@ public class CourseService {
         notificationService.registerObserver(new NotificationObserverImpl("NEW_COURSE"));
     }
 
+    /**
+     * Gets the singleton instance of CourseService.
+     * @return The CourseService instance
+     */
     public static CourseService getInstance() {
         if (instance == null) {
             instance = new CourseService();
@@ -34,6 +43,11 @@ public class CourseService {
         return instance;
     }
 
+    /**
+     * Creates a new course and notifies potential applicants.
+     * @param course The Course object to create
+     * @return true if creation was successful, false otherwise
+     */
     public boolean createCourse(Course course) {
         try {
             if (!validateCourse(course)) {
@@ -57,6 +71,11 @@ public class CourseService {
         }
     }
 
+    /**
+     * Updates an existing course's information.
+     * @param course The Course object containing updated information
+     * @return true if update was successful, false otherwise
+     */
     public boolean updateCourse(Course course) {
         try {
             if (!validateCourse(course)) {
@@ -89,6 +108,11 @@ public class CourseService {
         }
     }
 
+    /**
+     * Validates course fields for completeness and correctness.
+     * @param course The Course object to validate
+     * @return true if all required fields are valid, false otherwise
+     */
     private boolean validateCourse(Course course) {
         return course != null &&
                course.getCourseTitle() != null && !course.getCourseTitle().isEmpty() &&
@@ -101,6 +125,12 @@ public class CourseService {
                course.getApplicationDeadline() != null;
     }
 
+    /**
+     * Updates a course's status and sends notifications.
+     * @param courseId The ID of the course
+     * @param status The new CourseStatus to set
+     * @return true if update was successful, false otherwise
+     */
     public boolean updateCourseStatus(int courseId, CourseStatus status) {
         Course course = courseDAO.getCourseById(courseId);
         if (course == null) return false;
@@ -119,6 +149,13 @@ public class CourseService {
         return updated;
     }
 
+    /**
+     * Checks if a professional can apply to a specific course.
+     * Validates profile completion and application deadline.
+     * @param professional The AcademicProfessional object
+     * @param course The Course object
+     * @return true if application is allowed, false otherwise
+     */
     public boolean canApplyToCourse(AcademicProfessional professional, Course course) {
         System.out.println("Debug - Checking if can apply to course");
         System.out.println("Debug - Professional complete: " + professional.isProfileComplete());
@@ -134,6 +171,11 @@ public class CourseService {
                course.getApplicationDeadline().after(now);
     }
 
+    /**
+     * Searches for courses based on provided criteria.
+     * @param criteria The CourseSearchCriteria object containing search parameters
+     * @return List of courses matching the criteria
+     */
     public List<Course> searchCourses(CourseSearchCriteria criteria) {
         // Validate criteria
         if (criteria == null) {
@@ -148,6 +190,11 @@ public class CourseService {
         return courseDAO.getAvailableTerms();
     }
 
+    /**
+     * Gets recommended courses for a professional based on their expertise.
+     * @param professionalId The ID of the professional
+     * @return List of recommended courses
+     */
     public List<Course> getRecommendedCourses(int professionalId) {
         // Get professional's expertise and qualifications
         AcademicProfessional professional = UserService.getInstance().getProfessionalById(professionalId);

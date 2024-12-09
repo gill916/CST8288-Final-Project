@@ -19,6 +19,11 @@ import java.util.TreeSet;
  */
 public class CourseDAOImpl implements CourseDAO {
 
+    /**
+     * Creates a new course.
+     * @param course The Course object to create
+     * @return true if creation was successful, false otherwise
+     */
     @Override
     public boolean createCourse(Course course) {
         String query = "INSERT INTO courses (courseTitle, courseCode, term, schedule, deliveryMethod, outline, " +
@@ -44,6 +49,11 @@ public class CourseDAOImpl implements CourseDAO {
         }
     }
 
+    /**
+     * Updates an existing course.
+     * @param course The Course object containing updated details
+     * @return true if update was successful, false otherwise
+     */
     @Override
     public boolean updateCourse(Course course) {
         String query = "UPDATE courses SET courseTitle = ?, courseCode = ?, term = ?, schedule = ?, " +
@@ -69,6 +79,11 @@ public class CourseDAOImpl implements CourseDAO {
         }
     }
 
+    /**
+     * Deletes a course.
+     * @param courseId The ID of the course to delete
+     * @return true if deletion was successful, false otherwise
+     */
     @Override
     public boolean deleteCourse(int courseId) {
         String query = "DELETE FROM courses WHERE courseId = ?";
@@ -82,6 +97,11 @@ public class CourseDAOImpl implements CourseDAO {
         }
     }
 
+    /**
+     * Retrieves all courses for a specific institution.
+     * @param institutionId The ID of the institution
+     * @return List of Course objects
+     */
     @Override
     public List<Course> getCoursesByInstitution(int institutionId) {
         List<Course> courses = new ArrayList<>();
@@ -99,6 +119,12 @@ public class CourseDAOImpl implements CourseDAO {
         return courses;
     }
 
+    /**
+     * Updates the status of a specific course.
+     * @param courseId The ID of the course
+     * @param status The new CourseStatus to set
+     * @return true if update was successful, false otherwise
+     */
     @Override
     public boolean updateCourseStatus(int courseId, CourseStatus status) {
         String query = "UPDATE courses SET status = ? WHERE courseId = ?";
@@ -113,6 +139,11 @@ public class CourseDAOImpl implements CourseDAO {
         }
     }
 
+    /**
+     * Retrieves a specific course by its ID.
+     * @param courseId The ID of the course
+     * @return The Course object if found, null otherwise
+     */
     @Override
     public Course getCourseById(int courseId) {
         String query = "SELECT * FROM courses WHERE courseId = ?";
@@ -129,6 +160,10 @@ public class CourseDAOImpl implements CourseDAO {
         return null;
     }
 
+    /**
+     * Retrieves all courses in the system.
+     * @return List of all Course objects
+     */
     @Override
     public List<Course> getAllCourses() {
         List<Course> courses = new ArrayList<>();
@@ -145,6 +180,11 @@ public class CourseDAOImpl implements CourseDAO {
         return courses;
     }
 
+    /**
+     * Searches for courses based on specified criteria.
+     * @param criteria The CourseSearchCriteria object containing search parameters
+     * @return List of matching Course objects
+     */
     @Override
     public List<Course> searchCourses(CourseSearchCriteria criteria) {
         List<Course> results = new ArrayList<>();
@@ -210,6 +250,10 @@ public class CourseDAOImpl implements CourseDAO {
         return results;
     }
 
+    /**
+     * Retrieves all available academic terms.
+     * @return Set of unique term strings
+     */
     @Override
     public Set<String> getAvailableTerms() {
         Set<String> terms = new TreeSet<>();
@@ -226,6 +270,12 @@ public class CourseDAOImpl implements CourseDAO {
         return terms;
     }
 
+    /**
+     * Extracts a Course object from a ResultSet.
+     * @param rs The ResultSet containing the course data
+     * @return The Course object
+     * @throws SQLException If there is an error accessing the ResultSet
+     */
     private Course extractCourseFromResultSet(ResultSet rs) throws SQLException {
         Course course = new Course();
         course.setCourseId(rs.getInt("courseId"));

@@ -9,7 +9,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-
+/**
+ * Servlet for handling user logout.
+ * Invalidates the current session and redirects to the login page.
+ */
 @WebServlet("/auth/logout")
 public class LogoutServlet extends HttpServlet {
     @Override

@@ -16,12 +16,28 @@ import AcademicExchangePlatform.model.AcademicProfessional;
 import AcademicExchangePlatform.model.AcademicInstitution;
 import java.util.Map;
 
+/**
+ * Servlet for handling the main dashboard/home page functionality.
+ * Displays user-specific content and notifications based on user type.
+ * Manages session validation and user data refresh.
+ * Different content is displayed based on user type (Professional/Institution).
+ */
 @WebServlet("/home")
 public class HomeServlet extends HttpServlet {
     private final UserService userService = UserService.getInstance();
     private final NotificationService notificationService = NotificationService.getInstance();
     private final CourseApplicationService applicationService = CourseApplicationService.getInstance();
 
+    /**
+     * Handles GET requests for the dashboard page.
+     * Validates user session, refreshes user data, and sets up dashboard content.
+     * Different content is displayed based on user type (Professional/Institution).
+     *
+     * @param request The HTTP request
+     * @param response The HTTP response
+     * @throws ServletException If the request cannot be handled
+     * @throws IOException If an input or output error occurs
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {

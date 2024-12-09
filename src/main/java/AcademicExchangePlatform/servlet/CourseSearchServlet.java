@@ -16,11 +16,20 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-
+/**
+ * Servlet for searching courses.
+ */
 @WebServlet("/course/search")
 public class CourseSearchServlet extends HttpServlet {
     private final CourseService courseService = CourseService.getInstance();
 
+    /**
+     * Handles GET requests for course search.
+     * @param request The HTTP request
+     * @param response The HTTP response
+     * @throws ServletException If there is an error processing the request
+     * @throws IOException If there is an error writing to the response
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {

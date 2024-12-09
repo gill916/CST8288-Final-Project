@@ -14,10 +14,24 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * Servlet for handling user registration.
+ * Validates user input and creates a new user account.
+ * Redirects to login page after successful registration.
+ */
 @WebServlet("/auth/registration")
 public class RegisterServlet extends HttpServlet {
     private final UserService userService = UserService.getInstance();
 
+    /**
+     * Handles GET requests for user registration.
+     * Loads institution list for dropdown and forwards to registration page.
+     *
+     * @param request The HTTP request
+     * @param response The HTTP response
+     * @throws ServletException If the request cannot be handled
+     * @throws IOException If an input or output error occurs
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
@@ -26,6 +40,16 @@ public class RegisterServlet extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/views/auth/registration.jsp").forward(request, response);
     }
 
+    /**
+     * Handles POST requests for user registration.
+     * Validates user input and creates a new user account.
+     * Redirects to login page after successful registration.
+     *
+     * @param request The HTTP request
+     * @param response The HTTP response
+     * @throws ServletException If the request cannot be handled
+     * @throws IOException If an input or output error occurs
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
@@ -65,6 +89,13 @@ public class RegisterServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Retrieves a required parameter from the request.
+     * @param request The HTTP request
+     * @param paramName The name of the parameter
+     * @return The value of the parameter
+     * @throws IllegalArgumentException If the parameter is missing or empty
+     */
     private String getRequiredParameter(HttpServletRequest request, String paramName) {
         String value = request.getParameter(paramName);
         if (value == null || value.trim().isEmpty()) {

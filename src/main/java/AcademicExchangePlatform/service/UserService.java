@@ -13,13 +13,26 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Collections;
 
+/**
+ * Service class for managing user operations.
+ * Handles user registration, login, profile updates, and data retrieval.
+ * Implements the Singleton pattern for centralized user management.
+ */
 public class UserService {
     private static UserService instance;
     
+    /**
+     * Private constructor for singleton pattern.
+     * Initializes userDAO.
+     */
     private UserService() {
         this.userDAO = UserDAOImpl.getInstance();
     }
     
+    /**
+     * Gets the singleton instance of UserService.
+     * @return The UserService instance
+     */
     public static UserService getInstance() {
         if (instance == null) {
             synchronized(UserService.class) {
@@ -33,6 +46,11 @@ public class UserService {
 
     private final UserDAO userDAO;
 
+    /**
+     * Registers a new user in the system.
+     * @param user The user to register
+     * @return True if registration is successful, false otherwise
+     */
     public boolean register(User user) {
         if (!validateUserFields(user)) {
             return false;
@@ -45,6 +63,12 @@ public class UserService {
         return userDAO.addUser(user);
     }
 
+    /**
+     * Logs in a user with the given email and password.
+     * @param email The email of the user
+     * @param password The password of the user
+     * @return The logged-in user or null if login fails
+     */
     public User login(String email, String password) {
         User user = userDAO.getUserByEmail(email);
         if (user != null && user.getPassword().equals(password) && "ACTIVE".equals(user.getStatus())) {
@@ -59,6 +83,11 @@ public class UserService {
         return null;
     }
 
+    /**
+     * Updates the profile of a user.
+     * @param user The user to update
+     * @return True if the update is successful, false otherwise
+     */
     public boolean updateProfile(User user) {
         if (user instanceof AcademicProfessional) {
             AcademicProfessional professional = (AcademicProfessional) user;
@@ -90,10 +119,19 @@ public class UserService {
         return false;
     }
 
+    /**
+     * Retrieves all institutions from the database.
+     * @return List of all institutions
+     */
     public List<AcademicInstitution> getAllInstitutions() {
         return userDAO.getAllInstitutions();
     }
 
+    /**
+     * Validates the fields of a user.
+     * @param user The user to validate
+     * @return True if the user is valid, false otherwise
+     */
     private boolean validateUserFields(User user) {
         if (user == null || user.getEmail() == null || user.getPassword() == null) {
             return false;
@@ -118,6 +156,11 @@ public class UserService {
         return institution.getInstitutionName() != null && !institution.getInstitutionName().isEmpty();
     }
 
+    /**
+     * Retrieves a professional by their user ID.
+     * @param userId The ID of the professional to retrieve
+     * @return The professional or null if not found
+     */
     public AcademicProfessional getProfessionalById(int userId) {
         User user = userDAO.getUserById(userId);
         if (user instanceof AcademicProfessional) {
@@ -126,6 +169,11 @@ public class UserService {
         return null;
     }
 
+    /**
+     * Updates a user's profile in the database.
+     * @param user The user to update
+     * @return True if the update is successful, false otherwise
+     */
     public boolean updateUser(User user) {
         if (user instanceof AcademicProfessional) {
             AcademicProfessional professional = (AcademicProfessional) user;
@@ -161,6 +209,10 @@ public class UserService {
         return false;
     }
 
+    /**
+     * Retrieves all professionals from the database.
+     * @return List of all professionals
+     */
     public List<AcademicProfessional> getAllProfessionals() {
         try {
             return userDAO.getAllProfessionals();

@@ -15,6 +15,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
+/**
+ * Service class for managing course applications.
+ * Provides methods for applying for courses, withdrawing applications, updating application status,
+ * retrieving applications by course or professional, and checking application eligibility.
+ */
 public class CourseApplicationService {
     private static CourseApplicationService instance;
     private final CourseApplicationDAO applicationDAO;

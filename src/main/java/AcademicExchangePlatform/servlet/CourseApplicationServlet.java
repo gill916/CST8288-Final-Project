@@ -17,7 +17,18 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
-
+/**
+ * Servlet for handling course application operations.
+ * Manages application viewing, submission, withdrawal, and status updates.
+ * URL patterns:
+ * - /application/view/* : View specific application
+ * - /application/manage/* : Manage applications (institution)
+ * - /application/my-applications : View user's applications
+ * - /application/apply : Apply for a course
+ * - /application/submit : Submit application
+ * - /application/withdraw : Withdraw application
+ * - /application/updateStatus : Update application status
+ */
 @WebServlet({
     "/application/view/*",
     "/application/manage/*",
@@ -32,6 +43,10 @@ public class CourseApplicationServlet extends HttpServlet {
     private final CourseApplicationService applicationService = CourseApplicationService.getInstance();
     private final CourseService courseService = CourseService.getInstance();
 
+    /**
+     * Handles GET requests for viewing and managing applications.
+     * Routes to appropriate handler based on URL pattern.
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
@@ -80,6 +95,10 @@ public class CourseApplicationServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Handles POST requests for application operations.
+     * Includes submission, withdrawal, and status updates.
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
@@ -115,6 +134,10 @@ public class CourseApplicationServlet extends HttpServlet {
         response.sendError(HttpServletResponse.SC_NOT_FOUND);
     }
 
+    /**
+     * Handles viewing of a specific application.
+     * Validates user access rights before displaying application details.
+     */
     private void handleViewApplication(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         try {
@@ -151,6 +174,10 @@ public class CourseApplicationServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Handles management of applications for institutions.
+     * Shows all applications or applications for a specific course.
+     */
     private void handleManageApplications(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         try {
@@ -197,6 +224,10 @@ public class CourseApplicationServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Handles viewing of a professional's own applications.
+     * Shows list of all applications submitted by the user.
+     */
     private void handleMyApplications(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         System.out.println("Debug - Entering handleMyApplications");
@@ -219,6 +250,10 @@ public class CourseApplicationServlet extends HttpServlet {
                .forward(request, response);
     }
 
+    /**
+     * Handles submission of new course applications.
+     * Validates professional's profile completion and course availability.
+     */
     private void handleSubmitApplication(HttpServletRequest request, HttpServletResponse response) 
             throws IOException {
         try {
@@ -275,15 +310,46 @@ public class CourseApplicationServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Handles withdrawal of an existing application.
+     * Validates that the user owns the application being withdrawn.
+     */
     private void handleWithdrawApplication(HttpServletRequest request, HttpServletResponse response) 
             throws IOException {
-        int applicationId = Integer.parseInt(request.getParameter("applicationId"));
-        AcademicProfessional professional = (AcademicProfessional) request.getSession().getAttribute("user");
-        
-        boolean success = applicationService.withdrawApplication(applicationId, professional.getUserId());
-        response.sendRedirect(request.getContextPath() + "/application/my-applications?withdrawn=" + success);
+        try {
+            String applicationIdParam = request.getParameter("applicationId");
+            if (applicationIdParam == null || applicationIdParam.isEmpty()) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+                return;
+            }
+
+            int applicationId = Integer.parseInt(applicationIdParam);
+            AcademicProfessional professional = (AcademicProfessional) request.getSession().getAttribute("user");
+            
+            if (professional == null) {
+                response.sendRedirect(request.getContextPath() + "/auth/login");
+                return;
+            }
+
+            boolean success = applicationService.withdrawApplication(applicationId, professional.getUserId());
+            
+            if (success) {
+                response.sendRedirect(request.getContextPath() + "/application/my-applications?success=withdrawn");
+            } else {
+                response.sendRedirect(request.getContextPath() + "/application/my-applications?error=withdraw_failed");
+            }
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect(request.getContextPath() + "/error");
+        }
     }
 
+    /**
+     * Handles updating of application status by institutions.
+     * Validates institution's authority to update the application.
+     */
     private void handleUpdateStatus(HttpServletRequest request, HttpServletResponse response) 
             throws IOException {
         try {
