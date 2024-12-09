@@ -3,6 +3,10 @@ package AcademicExchangePlatform.model;
 import AcademicExchangePlatform.dbenum.DeliveryMethod;
 import AcademicExchangePlatform.dbenum.Schedule;
 
+/**
+ * Represents search criteria for filtering courses.
+ * Contains parameters for keyword, schedule, delivery method, term, active status, and open status.
+ */
 public class CourseSearchCriteria {
     private String keyword;
     private Schedule schedule;

@@ -1,5 +1,8 @@
 package AcademicExchangePlatform.dbenum;
 
+/**
+ * Enum representing the method of delivery for a course.
+ */
 public enum DeliveryMethod {
     IN_PERSON,
     REMOTE,

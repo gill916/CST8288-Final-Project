@@ -1,5 +1,10 @@
 package AcademicExchangePlatform.model;
 
+/**
+ * Abstract decorator class for notification systems.
+ * Extends the Subject interface to add notification functionality.
+ * Part of the Decorator pattern implementation for notification system.
+ */
 public abstract class NotificationDecorator implements Subject {
     protected Subject wrappedSubject;
 

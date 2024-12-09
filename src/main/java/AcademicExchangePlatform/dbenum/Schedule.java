@@ -1,5 +1,8 @@
 package AcademicExchangePlatform.dbenum;
 
+/**
+ * Enum representing the schedule of a course.
+ */
 public enum Schedule {
     MORNING,
     AFTERNOON,

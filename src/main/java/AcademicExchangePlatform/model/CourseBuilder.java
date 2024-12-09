@@ -5,6 +5,11 @@ import AcademicExchangePlatform.dbenum.Schedule;
 
 import java.math.BigDecimal;
 
+/**
+ * Builder class for creating Course objects.
+ * Provides a fluent interface for setting course properties.
+ * Implements the Builder design pattern for constructing Course objects.
+ */
 public class CourseBuilder {
     private int courseId;
     private String courseTitle;

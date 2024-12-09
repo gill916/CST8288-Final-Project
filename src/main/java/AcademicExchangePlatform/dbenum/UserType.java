@@ -1,5 +1,8 @@
 package AcademicExchangePlatform.dbenum;
 
+/**
+ * Enum representing the type of user.
+ */
 public enum UserType {
     PROFESSIONAL("Professional"),
     INSTITUTION("Institution"),

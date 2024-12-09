@@ -3,6 +3,11 @@ package AcademicExchangePlatform.model;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Interface defining the contract for notification subjects.
+ * Part of the Observer pattern implementation.
+ * Provides methods for observer management and notification distribution.
+ */
 public abstract class NotificationSubject {
     private List<NotificationObserver> observers = new ArrayList<>();
 

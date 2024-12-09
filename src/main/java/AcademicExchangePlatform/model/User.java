@@ -3,6 +3,11 @@ package AcademicExchangePlatform.model;
 import AcademicExchangePlatform.dbenum.UserType;
 import java.util.Date;
 
+/**
+ * Abstract base class for user entities in the system.
+ * Defines common attributes and behaviors for all user types.
+ * Serves as the foundation for specific user type implementations.
+ */
 public abstract class User {
     private int userId;
     private String email;

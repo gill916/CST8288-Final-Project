@@ -3,6 +3,11 @@ package AcademicExchangePlatform.model;
 import AcademicExchangePlatform.model.Notification;
 import AcademicExchangePlatform.service.NotificationService;
 
+/**
+ * Concrete implementation of NotificationObserver interface.
+ * Handles the creation and processing of notifications based on system events.
+ * Implements the observer pattern for notification handling.
+ */
 public class NotificationObserverImpl implements NotificationObserver {
     private final String observerType;
     

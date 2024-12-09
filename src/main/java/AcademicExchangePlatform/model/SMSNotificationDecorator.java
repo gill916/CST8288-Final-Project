@@ -1,5 +1,10 @@
 package AcademicExchangePlatform.model;
 
+/**
+ * Decorator class for adding SMS notification functionality.
+ * Extends NotificationDecorator to add SMS-specific notification behavior.
+ * Part of the Decorator pattern implementation for notification system.
+ */
 public class SMSNotificationDecorator extends NotificationDecorator {
     public SMSNotificationDecorator(Subject wrappedNotifier) {
         super(wrappedNotifier);

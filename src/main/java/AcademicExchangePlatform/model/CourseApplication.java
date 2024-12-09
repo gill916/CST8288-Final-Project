@@ -3,6 +3,10 @@ package AcademicExchangePlatform.model;
 import AcademicExchangePlatform.dbenum.ApplicationStatus;
 import java.util.Date;
 
+/**
+ * Represents an application for a course.
+ * Contains details about the application, including course, professional, status, and related documents.
+ */
 public class CourseApplication {
     private int applicationId;
     private int courseId;

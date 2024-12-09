@@ -1,5 +1,8 @@
 package AcademicExchangePlatform.dbenum;
 
+/**
+ * Enum representing the status of a course.
+ */
 public enum CourseStatus {
     ACTIVE("Active"),
     INACTIVE("Inactive"),

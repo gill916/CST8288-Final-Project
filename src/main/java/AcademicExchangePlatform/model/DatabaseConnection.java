@@ -4,6 +4,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+/**
+ * Singleton class managing database connections.
+ * Provides a centralized point for database connection management.
+ * Implements thread-safe singleton pattern for database connection handling.
+ */
 public class DatabaseConnection {
     private static final String URL = "jdbc:mysql://localhost:3306/academicexchangeplatform";
     private static final String USER = "root";

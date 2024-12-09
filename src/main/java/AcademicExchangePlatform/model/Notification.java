@@ -2,6 +2,11 @@ package AcademicExchangePlatform.model;
 
 import java.util.Date;
 
+/**
+ * Represents a notification in the system.
+ * Contains notification details such as message, type, and status.
+ * Used for storing and managing notification data throughout the application.
+ */
 public class Notification {
     private int notificationId;
     private int userId;
