@@ -13,6 +13,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+/**
+ * Implementation of the CourseDAO interface.
+ * Provides methods to create, update, retrieve, and manage courses.
+ */
 public class CourseDAOImpl implements CourseDAO {
 
     @Override

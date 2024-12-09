@@ -6,6 +6,10 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implementation of the NotificationDAO interface.
+ * Provides methods to create, update, retrieve, and manage notifications.
+ */
 public class NotificationDAOImpl implements NotificationDAO {
     private static NotificationDAOImpl instance;
     

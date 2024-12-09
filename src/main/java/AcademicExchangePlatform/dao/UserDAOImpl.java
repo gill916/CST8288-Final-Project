@@ -8,6 +8,10 @@ import java.util.List;
 import java.sql.Timestamp;
 import java.util.Arrays;
 
+/**
+ * Implementation of the UserDAO interface.
+ * Provides methods to create, update, retrieve, and manage users.
+ */
 public class UserDAOImpl implements UserDAO {
     private static UserDAOImpl instance;
     
